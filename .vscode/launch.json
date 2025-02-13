@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+          "name": "Attach to Hermes application",
+          "request": "attach",
+          "type": "reactnativedirect",
+          "cwd": "${workspaceFolder}",
+          "skipFiles": [
+              "${workspaceRoot}/node_modules/**/*.js",
+              "${workspaceRoot}/src/node_modules/**/*.js",
+              "<node_internals>/**/*.js"
+          ]
+      }
+  ]
+}
