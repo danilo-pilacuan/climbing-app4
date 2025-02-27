@@ -1,16 +1,24 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-      {
-          "name": "Attach to Hermes application",
-          "request": "attach",
-          "type": "reactnativedirect",
-          "cwd": "${workspaceFolder}",
-          "skipFiles": [
-              "${workspaceRoot}/node_modules/**/*.js",
-              "${workspaceRoot}/src/node_modules/**/*.js",
-              "<node_internals>/**/*.js"
-          ]
-      }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "expo",
+            "request": "attach",
+            "name": "Debug Expo app",
+            "projectRoot": "${workspaceFolder}",
+            "bundlerPort": "8081",
+            "bundlerHost": "127.0.0.1"
+        },
+        {
+            "name": "Attach to Hermes application",
+            "request": "attach",
+            "type": "reactnativedirect",
+            "cwd": "${workspaceFolder}",
+            "skipFiles": [
+                "${workspaceRoot}/node_modules/**/*.js",
+                "${workspaceRoot}/src/node_modules/**/*.js",
+                "<node_internals>/**/*.js"
+            ]
+        }
+    ]
 }

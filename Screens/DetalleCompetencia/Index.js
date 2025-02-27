@@ -34,19 +34,28 @@ const IndexDetalleCompetencia = () => {
     setCompetencias(filtered);
   };
 
-  const handleCreateCompetencia = () => {
-    navigation.navigate('CrearCompetencia'); // Navega a la pantalla de creación
-  };
 
-  const handleEditCompetencia = (id) => {
-    navigation.navigate('DCDetalleCompetencia', { idCom: id });
+  const handleLlenarCompetencia = (item) => {
+    console.log("Competencia 👽😡🐳😈🔶🎃:",JSON.stringify(item))
+    if(item.idMod==1){
+      navigation.navigate('DCCompetenciaVelocidad', { idCom: item.idCom });
+    }
+    if(item.idMod==2){
+      navigation.navigate('DCCompetenciaBloque', { idCom: item.idCom });
+    }
+    if(item.idMod==3){
+      navigation.navigate('DCCompetenciaVias', { idCom: item.idCom });
+    }
+    if(item.idMod==4){
+      navigation.navigate('DCCompetenciaCombinada', { idCom: item.idCom });
+    }
   };
 
   const handleDetailsCompetencia = (id) => {
     navigation.navigate('DetallesCompetencia', { idCom: id }); // Navega a la pantalla de detalles
   };
 
-  const handleDeleteCompetencia = async (id) => {
+  const handleDeshabilitarCompetencia = async (id) => {
     try {
       await api.delete(`/api/Competencia/${id}`);
       setCompetencias(competencias.filter(competencia => competencia.IdCom !== id));
@@ -84,13 +93,13 @@ const IndexDetalleCompetencia = () => {
       
       {/* Botones para Editar y Eliminar */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.button,styles.warningBtn]} onPress={() => handleEditCompetencia(item.idCom)}>
+        <TouchableOpacity style={[styles.button,styles.warningBtn]} onPress={() => handleLlenarCompetencia(item)}>
           <Text style={styles.buttonText}>Llenar</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button]} onPress={() => handleDetailsCompetencia(item.idCom)}>
           <Text style={styles.buttonText}>Detalles</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleDeleteCompetencia(item.idCom)}>
+        <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleDeshabilitarCompetencia(item.idCom)}>
           <Text style={styles.buttonText}>Deshabilitar</Text>
         </TouchableOpacity>
       </View>

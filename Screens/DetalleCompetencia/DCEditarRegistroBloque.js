@@ -29,20 +29,20 @@ const DCEditarRegistroResultado = () => {
 
   const handleInputChange = (key, value) => {
     setRegistroResultado({ ...registroResultado, [key]: value });
+
   };
 
   
   const handleGuardarCambios = async () => {
     try {
-     if(registroResultado.competenciumNavigation && registroResultado.competenciumNavigation.idMod==1){
-        if(registroResultado.tiempo1>0 && registroResultado.tiempo2>0){
-            registroResultado.registroCompleto=true;
-        }
-     }
+            
+
+     registroResultado.registroCompleto=true;
+
       await api.put(`/api/RegistroResultado/${idRegistroResultado}`, registroResultado);
       Alert.alert('Éxito', 'Registro actualizado correctamente');
       navigation.goBack();
-      navigation.navigate('DCDetalleCompetencia', { idCom: idCom, regUpdated: true });
+      navigation.navigate('DCCompetenciaBloque', { idCom: idCom, regUpdated: true });
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'No se pudo actualizar el registro');
@@ -53,71 +53,56 @@ const DCEditarRegistroResultado = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Editar Registro de Resultado 
-      Competión
-      { registroResultado.competenciumNavigation &&  registroResultado.competenciumNavigation.idMod==1?" Velocidad":registroResultado.competenciumNavigation.idMod==2?" Bloque":registroResultado.competenciumNavigation.idMod==3?" Vias":" Combinada"}
-
+      <Text style={styles.title}>
+        Editar Registro de Resultado Bloque
       </Text>
+  
       
-      {/* <Text style={styles.label}>ID Deportista</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.idDep?.toString() || ''}
-        onChangeText={(value) => handleInputChange('idDep', value)}
-      /> */}
-
-      {registroResultado.competenciumNavigation.idMod==1 &&
-      <>
-        <Text style={styles.label}>Tiempo 1</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.tiempo1?.toString() || ''}
-        onChangeText={(value) => handleInputChange('tiempo1', value)}
-      />
-
-      <Text style={styles.label}>Tiempo 2</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.tiempo2?.toString() || ''}
-        onChangeText={(value) => handleInputChange('tiempo2', value)}
-      /></>}
-
-      {registroResultado.competenciumNavigation.idMod==2 &&
-        <>
-        <Text style={styles.label}>Intento 1</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.intento1?.toString() || ''}
-        onChangeText={(value) => handleInputChange('intento1', value)}
-      />
-
-      <Text style={styles.label}>Completado 1</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.completado1 ? '1' : '0'}
-        onChangeText={(value) => handleInputChange('completado1', value === '1')}
-      />
-
-      <Text style={styles.label}>Puesto</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.puesto?.toString() || ''}
-        onChangeText={(value) => handleInputChange('puesto', value)}
-      />
-      </>
-      }
+        <View style={styles.tableContainer}>
+          {/* Encabezado de la tabla */}
+          <View style={[styles.row, styles.headerRow]}>
+            <Text style={styles.headerCell}></Text>
+            {[1, 2, 3, 4].map((num) => (
+              <Text key={num} style={styles.headerCell}>{`Ruta ${num}`}</Text>
+            ))}
+          </View>
+  
+          {/* Fila de TopB */}
+          <View style={styles.row}>
+            <Text style={styles.labelCell}>Top</Text>
+            {[1, 2, 3, 4].map((num) => (
+              <TextInput
+                key={`topB${num}`}
+                style={styles.inputCell}
+                keyboardType="numeric"
+                value={registroResultado[`topB${num}`]?.toString() || ''}
+                onChangeText={(value) => handleInputChange(`topB${num}`, value)}
+              />
+            ))}
+          </View>
+  
+          {/* Fila de ZonaB */}
+          <View style={styles.row}>
+            <Text style={styles.labelCell}>Zona</Text>
+            {[1, 2, 3, 4].map((num) => (
+              <TextInput
+                key={`zonaB${num}`}
+                style={styles.inputCell}
+                keyboardType="numeric"
+                value={registroResultado[`zonaB${num}`]?.toString() || ''}
+                onChangeText={(value) => handleInputChange(`zonaB${num}`, value)}
+              />
+            ))}
+          </View>
+        </View>
+      
+  
       <TouchableOpacity style={styles.saveButton} onPress={handleGuardarCambios}>
         <Text style={styles.saveButtonText}>Guardar Cambios</Text>
       </TouchableOpacity>
     </ScrollView>
   );
-};
+};  
 
 const styles = StyleSheet.create({
   container: {
@@ -158,6 +143,50 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+
+  // Estilos de la tabla
+  tableContainer: {
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerRow: {
+    backgroundColor: '#ddd',
+    paddingVertical: 8,
+  },
+  headerCell: {
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+  },
+  labelCell: {
+    width: 60,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    paddingVertical: 8,
+    borderRightWidth: 1,
+    borderColor: '#ccc',
+  },
+  inputCell: {
+    flex: 1,
+    textAlign: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    margin: 5,
   },
 });
 

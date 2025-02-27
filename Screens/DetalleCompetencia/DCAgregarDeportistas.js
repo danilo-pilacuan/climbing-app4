@@ -14,33 +14,9 @@ const DCAgregarDeportistas = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(''); //FIXME: Implementar busqueda de deportista
 
 
-const DATA = [
-    { id: "1", title: "Opción 1" },
-    { id: "2", title: "Opción 2" },
-    { id: "3", title: "Opción 3" },
-    { id: "4", title: "Opción 4" },
-    { id: "5", title: "Opción 5" },
-    { id: "6", title: "Opción 6" },
-    { id: "7", title: "Opción 7" },
-    { id: "8", title: "Opción 8" },
-    { id: "9", title: "Opción 9" },
-    { id: "10", title: "Opción 10" },
-  ];
-const DATA2 = [
-    { id: "1", title: "Opción 1" },
-    { id: "2", title: "Opción 2" },
-    { id: "3", title: "Opción 3" },
-    { id: "4", title: "Opción 4" },
-    { id: "5", title: "Opción 5" },
-    { id: "6", title: "Opción 6" },
-    { id: "7", title: "Opción 7" },
-    { id: "8", title: "Opción 8" },
-    { id: "9", title: "Opción 9" },
-    { id: "10", title: "Opción 10" },
-  ];
 
   useEffect(() => {
     // const fetchcompetencia = async () => {
@@ -97,39 +73,7 @@ const DATA2 = [
 
   }, []);
 
-  const handleSearch = () => {
-    const filtered = competencia.filter(competencia =>
-      competencia.nombreCom.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setcompetencia(filtered);
-  };
 
-  const handleCreateCompetencia = () => {
-    navigation.navigate('CrearCompetencia'); // Navega a la pantalla de creación
-  };
-
-  const handleEditCompetencia = (id) => {
-    navigation.navigate('EditarCompetencia', { idCom: id }); // Navega a la pantalla de edición
-  };
-
-  const handleDetailsCompetencia = (id) => {
-    navigation.navigate('DetallesCompetencia', { idCom: id }); // Navega a la pantalla de detalles
-  };
-
-  const handleAgregarDeportistas = () => {
-    navigation.navigate('DCAgregarDeportistas', { idCom: idCom }); 
-  }
-
-  const handleDeleteCompetencia = async (id) => {
-    try {
-      await api.delete(`/api/Competencia/${id}`);
-      setcompetencia(competencia.filter(competencia => competencia.IdCom !== id));
-      Alert.alert('Éxito', 'Competencia eliminada con éxito');
-    } catch (err) {
-      console.error(err);
-      Alert.alert('Error', 'No se pudo eliminar la competencia');
-    }
-  };
 
   const handleAgregarDeportista = (deportista) => {
     setDeportistasDisponibles((prev) => prev.filter(d => d.idDep !== deportista.idDep));
@@ -147,8 +91,20 @@ const handleFinishSelection = async () => {
 
   api.post("/api/CompetenciaDeportista/bulk",apiData)
   .then(response=>{
+    console.log("Response: "+response.data);
     navigation.goBack();
-    navigation.navigate('DCDetalleCompetencia', { idCom: idCom, depAdded:true }); 
+    if(competencia.idMod==1){
+      navigation.navigate('DCCompetenciaVelocidad', { idCom: idCom, depAdded:true }); 
+    }
+    if(competencia.idMod==2){
+      navigation.navigate('DCCompetenciaBloque', { idCom: idCom, depAdded:true }); 
+    }
+    if(competencia.idMod==3){
+      navigation.navigate('DCCompetenciaVias', { idCom: idCom, depAdded:true }); 
+    }
+    if(competencia.idMod==4){
+      navigation.navigate('DCCompetenciaCombinada', { idCom: idCom, depAdded:true }); 
+    }
 
   })
   .catch(error=>{
