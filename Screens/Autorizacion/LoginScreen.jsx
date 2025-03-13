@@ -20,8 +20,8 @@ import useAppStorageHook from './../../storage/appStorage';
 const LoginScreen = () => {
   const {appUser,unsetAppUser,setAppUser} = useAppStorageHook();
 
-  const [correo, onChangeCorreo] = React.useState('');
-  const [contrasenia, onChangePassword] = React.useState('');
+  const [correo, onChangeCorreo] = React.useState('admin');
+  const [contrasenia, onChangePassword] = React.useState('admin');
   const [mailOk, setMailOk] = React.useState(true);
   const [mailInput, setMailInput] = React.useState(true);
 

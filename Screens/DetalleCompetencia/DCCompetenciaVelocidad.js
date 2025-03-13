@@ -613,6 +613,18 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
     setIsTerminarCuartosEnabled(false)
 
   }
+
+  const handleDesactivarCompetencia = async () => {
+    try {
+      console.log("/api/Competencia/desactivar/"+idCom.toString())
+      return await api.put(
+        "/api/Competencia/desactivar/"+idCom.toString()
+      );
+    } catch (error) {
+      console.error("Error al desactivar la competencia: ", error);
+    }
+  }
+
   const handleTerminarFinal = async () => {
     // setIsOctavosTabActive(true);
     console.log("Llegamos a final")
@@ -636,7 +648,7 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
     console.log("tercerLugar "+ JSON.stringify(tercerLugar));
     // const ganador = regsResFinal.sort((a, b) => (a.tiempo1 +a.tiempo2) - (b.tiempo1+b.tiempo2)).slice(0, 1);
     //     console.log('Ganador: 😒😒😒😒😒', ganador);
-        
+    handleDesactivarCompetencia();  
         Alert.alert('Ganador', 'El ganador es: '+ganador[0].deportista.nombresDep+" "+ganador[0].deportista.apellidosDep+"\n"+
           "El tercer lugar es: "+tercerLugar[0].deportista.nombresDep+" "+tercerLugar[0].deportista.apellidosDep);
         //Alert.alert('Ganador', 'El tercerLugar es: '+tercerLugar.deportista.nombresDep+" "+ganador[0].deportista.apellidosDep);
@@ -883,8 +895,13 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
               {/* <Text style={styles.label}>Cédula: {item.deportista.cedulaDep}</Text> */}
               <Text style={styles.label}>Nombres: {item.deportista.nombresDep}</Text>
               <Text style={styles.label}>Apellidos: {item.deportista.apellidosDep}</Text>
-              <Text style={styles.label}>Tiempo1: {item.tiempo1}</Text>
-              <Text style={styles.label}>Tiempo2: {item.tiempo2}</Text>
+              {item.registroEditadoT1 && (
+                <Text style={styles.label}>Tiempo1: {item.fallRegistro1 ? "FALL" : item.tiempo1}</Text>
+              )}
+
+              {item.registroEditadoT2 && (
+                <Text style={styles.label}>Tiempo2: {item.fallRegistro2 ? "FALL" : item.tiempo2}</Text>
+              )}
             </View>
             <View style={styles.resBtnContainer}>
               <TouchableOpacity style={[styles.buttonResult, item.registroCompleto &&styles.inactiveTab]} onPress={() => handleEditarRegistroRes(item)}
@@ -915,8 +932,15 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
                 <Text style={styles.label}>Deportista 1: {item.registrosVS[0].deportista.cedulaDep}</Text>
                 <Text style={styles.label}>Nombres: {item.registrosVS[0].deportista.nombresDep}</Text>
                 <Text style={styles.label}>Apellidos: {item.registrosVS[0].deportista.apellidosDep}</Text>
-                {/* <Text style={styles.label}>Puesto: {item.registrosVS[0].orden}</Text> */}
-                <Text style={styles.label}>Tiempo1: {item.registrosVS[0].tiempo1}</Text>
+                
+                {/* {item.registrosVS[0].registroEditadoT1 && (
+                  <Text style={styles.label}>Tiempo1: {item.registrosVS[0].tiempo1}</Text>
+                )} */}
+
+                {item.registrosVS[0].registroEditadoT1 && (
+                  <Text style={styles.label}>Tiempo1: {item.registrosVS[0].fallRegistro1 ? "FALL" : item.registrosVS[0].tiempo1}</Text>
+                )}
+
               </View>
               <View style={styles.resVSItemBtnContainer}>
                 <TouchableOpacity style={[styles.buttonResult, item.registrosVS[0].registroCompleto &&styles.inactiveTab]} onPress={() => handleEditarRegistroRes(item.registrosVS[0])}
@@ -933,8 +957,16 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
                 <Text style={styles.label}>Deportista 2: {item.registrosVS[1].deportista.cedulaDep}</Text>
                 <Text style={styles.label}>Nombres: {item.registrosVS[1].deportista.nombresDep}</Text>
                 <Text style={styles.label}>Apellidos: {item.registrosVS[1].deportista.apellidosDep}</Text>
-                {/* <Text style={styles.label}>Puesto: {item.registrosVS[1].orden}</Text> */}
-                <Text style={styles.label}>Tiempo1: {item.registrosVS[1].tiempo1}</Text>
+                
+                
+                {/* {item.registrosVS[1].registroEditadoT1 && (
+                  <Text style={styles.label}>Tiempo1: {item.registrosVS[1].tiempo1}</Text>
+                )} */}
+
+                {item.registrosVS[1].registroEditadoT1 && (
+                  <Text style={styles.label}>Tiempo1: {item.registrosVS[1].fallRegistro1 ? "FALL" : item.registrosVS[1].tiempo1}</Text>
+                )}
+
               </View>
               <View style={styles.resVSItemBtnContainer}>
                 <TouchableOpacity style={[styles.buttonResult, item.registrosVS[1].registroCompleto &&styles.inactiveTab]} onPress={() => handleEditarRegistroRes(item.registrosVS[1])}

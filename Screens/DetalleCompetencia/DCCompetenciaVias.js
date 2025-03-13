@@ -5,6 +5,7 @@ import {
   FlatList,
   Alert,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
 } from "react-native";
 import {
@@ -37,6 +38,13 @@ const DCCompetenciaVias = () => {
 
   const [isTerminarClasifEnabled, setIsTerminarClasifEnabled] = useState(true);
   const [isTerminarFinalEnabled, setIsTerminarFinalEnabled] = useState(true);
+  
+  const [numPresasR1Clasif, setNumPresasR1Clasif] = useState(null);
+  const [numPresasR2Clasif, setNumPresasR2Clasif] = useState(null);
+  const [numPresasR1Final, setNumPresasR1Final] = useState(null);
+  const [numPresasR2Final, setNumPresasR2Final] = useState(null);
+
+
 
   const getCompetencia = async (id) => {
     try {
@@ -173,7 +181,7 @@ const DCCompetenciaVias = () => {
     } else {
       const ganador = regsResFinal.find((res) => res.orden == 1);
       console.log("Ganador: 😒😒😒😒😒", ganador);
-  
+      handleDesactivarCompetencia();
       Alert.alert(
         "Ganador",
         "El ganador es: " +
@@ -183,10 +191,21 @@ const DCCompetenciaVias = () => {
       );
   
       //setIsTerminarFinalEnabled(false);
+      
     }
 
     
   };
+
+  const handleDesactivarCompetencia = async () => {
+    try {
+      return await api.put(
+        "/api/Competencia/desactivar/"+idCom.toString()
+      );
+    } catch (error) {
+      console.error("Error al desactivar la competencia: ", error);
+    }
+  }
 
   const handleEditarRegistroRes = (registro) => {
     navigation.navigate("DCEditarRegistroVias", {
@@ -283,6 +302,30 @@ const DCCompetenciaVias = () => {
     ///////////////////////////////////////////////////////////////
   }, [competencia]);
 
+
+  const handleGuardarNumpresas= async (bodyUpdate)=>{
+    try {
+      await api.patch(
+        "/api/Competencia/actualizar-num-presas/"+idCom.toString(),
+        bodyUpdate
+      );
+      
+      getCompetencia(idCom)
+      .then((data) => {
+        setCompetencia(data);
+      })
+      .catch((error) => {
+        console.error(
+          "Error al obtener la competencia en useFocusEffect:",
+          error
+        );
+      });
+
+    } catch (error) {
+      console.error("Error al desactivar la competencia: ", error);
+    }
+  }
+
   const handleAgregarDeportistas = () => {
     navigation.navigate("DCAgregarDeportistas", { idCom: idCom });
   };
@@ -326,6 +369,72 @@ const DCCompetenciaVias = () => {
       case "resultados":
         return (
           <View style={styles.faseContainer}>
+            
+            {/* numPresasR1Clasif
+numPresasR2Clasif
+numPresasR1Final
+numPresasR2Final */}
+
+            <View style={styles.rutasPresasContainer}>
+              <View style={styles.rowPresasContainer}>
+                <View style={styles.rutasPresasColumn}>
+                  <Text style={styles.label}>Presas Ruta 1</Text>
+                  <TextInput
+                    style={styles.inputCell}
+                    keyboardType="numeric"
+                    value={ competencia.numPresasR1ClasifVias?competencia.numPresasR1ClasifVias.toString():( numPresasR1Clasif?.toString() || "")}
+                    onChangeText={(value) =>
+                      setNumPresasR1Clasif(value.toString())
+                    }
+                    editable={
+                      (!competencia.numPresasR1ClasifVias==null
+                        || competencia.numPresasR2ClasifVias<=0
+                        || competencia.numPresasR1ClasifVias<=0
+                        || !competencia.numPresasR2ClasifVias==null)
+                    }
+                  />
+                </View>
+                <View style={styles.rutasPresasColumn}>
+                  <Text style={styles.label}>Presas Ruta 2</Text>
+                  <TextInput
+                    style={styles.inputCell}
+                    keyboardType="numeric"
+                    value={ competencia.numPresasR2ClasifVias?competencia.numPresasR2ClasifVias.toString():( numPresasR2Clasif?.toString() || "")}
+                    onChangeText={(value) =>
+                      setNumPresasR2Clasif(value.toString())
+                    }
+                    editable={
+                      (!competencia.numPresasR1ClasifVias==null
+                        || competencia.numPresasR2ClasifVias<=0
+                        || competencia.numPresasR1ClasifVias<=0
+                         || !competencia.numPresasR2ClasifVias==null)
+                    }
+                  />
+                </View>
+              </View>
+              <View style={styles.rowPresasContainer}>
+              <TouchableOpacity
+              style={[
+                styles.guardarPresasButton,
+                !(!competencia.numPresasR1ClasifVias==null
+                  || competencia.numPresasR2ClasifVias<=0
+                  || competencia.numPresasR1ClasifVias<=0
+                   || !competencia.numPresasR2ClasifVias==null) && styles.inactiveTab,
+              ]}
+              onPress={()=>handleGuardarNumpresas(
+                {
+                  "numPresasR1ClasifVias":Number(numPresasR1Clasif),
+                  "numPresasR2ClasifVias":Number(numPresasR2Clasif)
+                }
+              )
+              }
+              disabled={!isTerminarClasifEnabled}
+            >
+              <Text style={styles.addButtonText}>Guardar # Presas</Text>
+            </TouchableOpacity>
+              </View>
+            </View>
+
             <Text style={styles.label}>
               Resultados:{" "}
               {registrosResultados.filter((r) => r.registroCompleto).length}/
@@ -426,10 +535,21 @@ const DCCompetenciaVias = () => {
               <TouchableOpacity
                 style={[
                   styles.buttonResult,
-                  item.registroCompleto && styles.inactiveTab,
+                  (item.registroCompleto 
+                    || 
+                    (!competencia.numPresasR1ClasifVias==null
+                      || competencia.numPresasR2ClasifVias<=0
+                      || competencia.numPresasR1ClasifVias<=0
+                       || !competencia.numPresasR2ClasifVias==null)
+                  )&& styles.inactiveTab,
                 ]}
                 onPress={() => handleEditarRegistroRes(item)}
-                disabled={item.registroCompleto}
+                disabled={item.registroCompleto || 
+                  (!competencia.numPresasR1ClasifVias==null
+                    || competencia.numPresasR2ClasifVias<=0
+                    || competencia.numPresasR1ClasifVias<=0
+                     || !competencia.numPresasR2ClasifVias==null)
+                }
               >
                 <Text style={[styles.buttonResultText]}>Agregar</Text>
               </TouchableOpacity>
@@ -763,6 +883,77 @@ const styles = StyleSheet.create({
   },
   resVSItemData: {},
   resVSItemBtnContainer: {},
+  tableContainer: {
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    backgroundColor: "#fff",
+    padding: 10,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  headerRow: {
+    backgroundColor: "#ddd",
+    paddingVertical: 8,
+  },
+  headerCell: {
+    flex: 1,
+    textAlign: "center",
+    fontWeight: "bold",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderColor: "#ccc",
+  },
+  labelCell: {
+    width: 60,
+    textAlign: "center",
+    fontWeight: "bold",
+    paddingVertical: 8,
+    borderRightWidth: 1,
+    borderColor: "#ccc",
+  },
+
+  rutasPresasContainer: {
+    flexShrink: 1, // Permite que la columna solo ocupe lo necesario
+    paddingVertical: 10, 
+  },
+  rowPresasContainer: {
+    
+    flexDirection: "row",
+  justifyContent: "flex-start", // Evita que se expandan uniformemente
+  alignItems: "center",
+  },
+  rutasPresasColumn: {
+    flex: 1,
+    paddingHorizontal: 5, 
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  inputCell: {
+    
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginTop: 5,
+    marginBottom: 10,
+    padding: 4,
+    fontSize: 14,
+    textAlign: "center",
+    backgroundColor: "#fff",
+  },
+  guardarPresasButton:{
+      backgroundColor: "#28a745",
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      borderRadius: 5,
+      alignSelf: "center",
+  }
 });
 
 export default DCCompetenciaVias;

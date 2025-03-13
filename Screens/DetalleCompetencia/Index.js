@@ -3,6 +3,8 @@ import { View, Text, TextInput, FlatList, Alert, StyleSheet, TouchableOpacity } 
 import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
 import api from '../../services/api'; // Asegúrate de importar tu instancia de API
 
+import { Button, Linking } from 'react-native';
+
 const IndexDetalleCompetencia = () => {
   const navigation = useNavigation(); // Inicializa useNavigation
   const [competencias, setCompetencias] = useState([]);
@@ -34,6 +36,21 @@ const IndexDetalleCompetencia = () => {
     setCompetencias(filtered);
   };
 
+  const handleDescargarReporte = async (id) => {
+    try {
+
+      console.log("⬇️⬇️⬇️⬇️⬇️⬇️")
+      console.log("Descargar: ",id)
+
+      const url = api.defaults.baseURL+`/api/Competencia/${id}/pdf`; // Reemplaza con la URL real
+      console.log("URL: ",url)
+      Linking.openURL(url);
+
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error', 'No se pudo descargar el reporte');
+    }
+  };
 
   const handleLlenarCompetencia = (item) => {
     console.log("Competencia 👽😡🐳😈🔶🎃:",JSON.stringify(item))
@@ -96,8 +113,11 @@ const IndexDetalleCompetencia = () => {
         <TouchableOpacity style={[styles.button,styles.warningBtn]} onPress={() => handleLlenarCompetencia(item)}>
           <Text style={styles.buttonText}>Llenar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button]} onPress={() => handleDetailsCompetencia(item.idCom)}>
+        {/* <TouchableOpacity style={[styles.button]} onPress={() => handleDetailsCompetencia(item.idCom)}>
           <Text style={styles.buttonText}>Detalles</Text>
+        </TouchableOpacity> */}
+        <TouchableOpacity style={[styles.button]} onPress={() => handleDescargarReporte(item.idCom)}>
+          <Text style={styles.buttonText}>Reporte</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleDeshabilitarCompetencia(item.idCom)}>
           <Text style={styles.buttonText}>Deshabilitar</Text>

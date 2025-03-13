@@ -10,11 +10,42 @@ const DCEditarRegistroResultado = () => {
   const [loading, setLoading] = useState(true);
 
   const [registroResultado, setRegistroResultado] = useState({});
+  const [tiempoOrig1, setTiempoOrig1] = useState(0);
+  const [tiempoOrig2, setTiempoOrig2] = useState(0);
 
   const fetchRegistroResultado = async () => {
     try {
       const response = await api.get(`/api/RegistroResultado/${idRegistroResultado}`);
-      setRegistroResultado(response.data);
+      let data = response.data; // Trabajamos con la data de la respuesta directamente
+      setTiempoOrig1(response.data.tiempo1); // Guardamos el valor original de tiempo1
+      setTiempoOrig2(response.data.tiempo2); // Guardamos el valor original de tiempo1
+
+      if(data.registroEditadoT1 === false && data.tiempo1 > 0){
+        console.log("🤢🤢🤢🤢🤢🤢");
+        
+        data = {
+          ...data,
+          tiempo1: 0, // Modificamos el valor de tiempo1
+        };
+      }
+
+      if(data.registroEditadoT1 === true && data.registroEditadoT2 === false && data.tiempo2 > 0){
+        console.log("😍😍😍😍😍😍😍😍😍😍");
+        
+        data = {
+          ...data,
+          tiempo2: 0, // Modificamos el valor de tiempo2
+        };
+      }
+
+      console.log("🦑🦑🦑🦑🦑🦑🦑 "+data)
+      console.log("🦑🦑🦑🦑🦑🦑🦑 tiempoOrig1: "+tiempoOrig1)
+      console.log("🦑🦑🦑🦑🦑🦑🦑 tiempoOrig2: "+tiempoOrig2)
+
+// Finalmente, actualizamos el estado con los cambios realizados sobre la data
+    setRegistroResultado(data);
+
+
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'No se pudo cargar el registro de resultado');
@@ -31,23 +62,108 @@ const DCEditarRegistroResultado = () => {
     setRegistroResultado({ ...registroResultado, [key]: value });
   };
 
+  const handleFallButtonT1 = async (key, value) => {
+    
+    try {
+
+      console.log("😡😡😡😡😡😡 tiempoOrig1: "+tiempoOrig1)
+      console.log("😡😡😡😡😡😡 tiempoOrig2: "+tiempoOrig2)
+     
+      let regResGuardar = {...registroResultado};
+
+
+
+      ///////////////////////////////
+
+
+        regResGuardar.registroEditadoT1 = true;
+        regResGuardar.fallRegistro1 = true;
+        regResGuardar.tiempo1=tiempoOrig1+1;
+
+        if(regResGuardar.tipoRegistro==2){
+          regResGuardar.registroCompleto=true;
+        }
+  
+      ///////////////////////////////
+
+      
+
+      // if(registroResultado.competencia && registroResultado.competencia.idMod==1){
+        
+      //   if(registroResultado.tipoRegistro==1){
+          
+      //       regResGuardar.registroEditadoT1 = true;
+      //       regResGuardar.fallRegistro1 = true;
+      //       tiempoOrig1;
+      //   }
+        
+      // }
+
+      await api.put(`/api/RegistroResultado/${idRegistroResultado}`, regResGuardar);
+      Alert.alert('Éxito', 'Registro actualizado correctamente');
+      navigation.goBack();
+      navigation.navigate('DCCompetenciaVelocidad', { idCom: idCom, regUpdated: true });
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo actualizar el registro');
+    }
+
+  };
+  
+  const handleFallButtonT2 = async (key, value) => {
+    
+    try {
+     
+      let regResGuardar = {...registroResultado};
+
+      regResGuardar.registroEditadoT2 = true;
+      regResGuardar.fallRegistro2 = true;
+      regResGuardar.tiempo2=tiempoOrig2+1;
+      regResGuardar.registroCompleto=true;
+
+      await api.put(`/api/RegistroResultado/${idRegistroResultado}`, regResGuardar);
+      Alert.alert('Éxito', 'Registro actualizado correctamente');
+      navigation.goBack();
+      navigation.navigate('DCCompetenciaVelocidad', { idCom: idCom, regUpdated: true });
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo actualizar el registro');
+    }
+
+  };
   
   const handleGuardarCambios = async () => {
     try {
-     if(registroResultado.competencia && registroResultado.competencia.idMod==1){
+     
+
+      let regResGuardar = {...registroResultado};
+
+      console.log("let regResGuardar = {...registroResultado}; ❌❌❌❌❌❌❌")
+      console.log(JSON.stringify(regResGuardar));
+      
+
         if(registroResultado.tipoRegistro==1){
-          if(registroResultado.tiempo1>0 && registroResultado.tiempo2>0){
-            registroResultado.registroCompleto=true;
+
+          if(!regResGuardar.registroEditadoT2 && regResGuardar.registroEditadoT1 && regResGuardar.tiempo2>0){
+            regResGuardar.registroEditadoT2 = true;
+            regResGuardar.registroCompleto = true;
+          }
+
+          if(regResGuardar.tiempo1>0){
+            regResGuardar.registroEditadoT1 = true;
+          }
+    
+          
         }
-        }
-        else
-        {
-          if(registroResultado.tiempo1>0){
-            registroResultado.registroCompleto=true;
+        else{
+          if(regResGuardar.tiempo1>0){
+            regResGuardar.registroEditadoT1 = true;
+            regResGuardar.registroCompleto = true;
           }
         }
-     }
-      await api.put(`/api/RegistroResultado/${idRegistroResultado}`, registroResultado);
+      
+
+      await api.put(`/api/RegistroResultado/${idRegistroResultado}`, regResGuardar);
       Alert.alert('Éxito', 'Registro actualizado correctamente');
       navigation.goBack();
       navigation.navigate('DCCompetenciaVelocidad', { idCom: idCom, regUpdated: true });
@@ -77,54 +193,47 @@ const DCEditarRegistroResultado = () => {
 
       {registroResultado.competencia.idMod==1 &&
       <>
-        <Text style={styles.label}>Tiempo 1</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.tiempo1?.toString() || ''}
-        onChangeText={(value) => handleInputChange('tiempo1', value)}
-      />
+        <Text style={styles.label}>Tiempo1: </Text>
+        <TextInput
+          style={styles.input}
+          value={registroResultado.fallRegistro1?"FALL":String(registroResultado.tiempo1)} // Aseguramos que el valor de tiempo1 siempre se mantenga si no es editado
+          editable={!registroResultado.registroEditadoT1}  // Si es true, el input está deshabilitado
+          keyboardType="numeric"  // Si esperas números
+          onChangeText={(value) => handleInputChange('tiempo1', value)}  // Actualiza el valor cuando lo edites
+          
+        />
+
+      <TouchableOpacity 
+      disabled={registroResultado.registroEditadoT1}
+      style={[styles.saveButton,registroResultado.registroEditadoT1 && styles.inactiveTab]} onPress={handleFallButtonT1}>
+        <Text style={[styles.saveButtonText,registroResultado.registroEditadoT1 && styles.inactiveTabText]}>Fall</Text>
+      </TouchableOpacity>
+
 
       {
         registroResultado.tipoRegistro==1 &&
         <>
-        <Text style={styles.label}>Tiempo 2</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.tiempo2?.toString() || ''}
-        onChangeText={(value) => handleInputChange('tiempo2', value)}
-      />
+        <Text style={styles.label}>Tiempo2: </Text>
+        <TextInput
+          style={styles.input}
+          value={registroResultado.fallRegistro2?"FALL":registroResultado.registroEditadoT1 ? String(registroResultado.tiempo2) : '0'}
+          editable={(!registroResultado.registroEditadoT2) && registroResultado.registroEditadoT1}  // Si es true, el input está deshabilitado
+          keyboardType="numeric"  // Si esperas números
+          onChangeText={(value) => handleInputChange('tiempo2', value)}  // Actualiza el valor cuando lo edites
+        />
+
+        <TouchableOpacity 
+        disabled={(!registroResultado.registroEditadoT1)}
+        style={[styles.saveButton,(!registroResultado.registroEditadoT1) && styles.inactiveTab]} onPress={handleFallButtonT2}>
+          <Text style={[styles.saveButtonText,(!registroResultado.registroEditadoT1) && styles.inactiveTabText]}>Fall</Text>
+        </TouchableOpacity>
+
+        {/* <TouchableOpacity style={styles.saveButton} onPress={handleFallButtonT2}>
+        <Text style={styles.saveButtonText}>Fall</Text>
+      </TouchableOpacity> */}
         </>
       }
       
-      </>}
-
-      {registroResultado.competencia.idMod==2 &&
-        <>
-        <Text style={styles.label}>Intento 1</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.intento1?.toString() || ''}
-        onChangeText={(value) => handleInputChange('intento1', value)}
-      />
-
-      <Text style={styles.label}>Completado 1</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.completado1 ? '1' : '0'}
-        onChangeText={(value) => handleInputChange('completado1', value === '1')}
-      />
-
-      <Text style={styles.label}>Puesto</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={registroResultado.puesto?.toString() || ''}
-        onChangeText={(value) => handleInputChange('puesto', value)}
-      />
       </>
       }
       <TouchableOpacity style={styles.saveButton} onPress={handleGuardarCambios}>
@@ -173,6 +282,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  inactiveTab: {
+    backgroundColor: "#D3D3D3", // Color de fondo para botones desactivados
+  },
+  inactiveTabText: {
+    color: "#A9A9A9", // Color de texto para botones desactivados
   },
 });
 
