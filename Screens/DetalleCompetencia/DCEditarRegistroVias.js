@@ -15,7 +15,7 @@ import api from "../../services/api";
 const DCEditarRegistroResultado = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { idCom, idRegistroResultado } = route.params;
+  const { idCom, idRegistroResultado,numPresasR1,numPresasR2 } = route.params;
   const [loading, setLoading] = useState(true);
 
   const [registroResultado, setRegistroResultado] = useState({});
@@ -23,6 +23,7 @@ const DCEditarRegistroResultado = () => {
     maxEscala1: false,
     maxEscala2: false,
   });
+
   const [competencia, setCompetencia] = useState();
 
   const fetchRegistroResultado = async () => {
@@ -50,7 +51,6 @@ const DCEditarRegistroResultado = () => {
         "Respuesta de la API: 🦑🦑🦑🦑🦑🎃🎃🎃🎃",
         JSON.stringify(response.data)
       );
-      //setCompetencia(response.data);
       return response.data;
     } catch (err) {
       console.error(err);
@@ -78,25 +78,12 @@ const DCEditarRegistroResultado = () => {
     setRegistroResultado({ ...registroResultado, [key]: value });
   };
 
-  const handleCheckboxChange = (key) => {
-    setTopSeleccionado((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-
-    setRegistroResultado((prev) => ({
-      ...prev,
-      [key]: !topSeleccionado[key] ? prev.maxPresas.toString() : "", // Si se activa, se asigna maxPresas
-    }));
-  };
-
   const handleToggleTop = (key) => {
     setTopSeleccionado((prev) => ({ ...prev, [key]: !prev[key] }));
     if (!topSeleccionado[key]) {
-      // Si se activa Top, se borra el valor de maxEscala correspondiente
       setRegistroResultado((prev) => ({
         ...prev,
-        [key]: registroResultado.maxPresas.toString(),
+        [key]: "TOP",
       }));
     }
   };
@@ -144,43 +131,43 @@ const DCEditarRegistroResultado = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Editar Registro de Resultado Vias</Text>
-      {/* <Text style={styles.title}>{competencia.nombreCom}</Text> */}
-
-      {/* Aquí adaptamos la lógica de edición para utilizar los campos de Intento y MaxEscala */}
-
       <View style={styles.tableContainer}>
-        {/* Fila de Intentos */}
         <View style={[styles.row, styles.headerRow]}>
           <Text style={styles.headerCell}></Text>
-          {[1, 2].map((num) => (
-            <Text key={num} style={styles.headerCell}>{`R${num}`}</Text>
-          ))}
+          <Text style={styles.headerCell}>R1</Text>
+          <Text style={styles.headerCell}>R2</Text>
         </View>
 
-        {/* Fila de MaxEscala */}
         <View style={styles.row}>
           <Text style={styles.labelCell}>Max Escala</Text>
-          {[1, 2].map((num) => (
-            <>
-              <TextInput
-                key={`maxEscala${num}`}
-                style={styles.inputCell}
-                keyboardType="numeric"
-                value={registroResultado[`maxEscala${num}`]?.toString() || ""}
-                onChangeText={(value) =>
-                  handleInputChange(`maxEscala${num}`, value)
-                }
-                editable={!topSeleccionado[`maxEscala${num}`]}
-              />
-              <View style={styles.switchContainer}>
-                <Text style={styles.switchLabel}>Top</Text>
-                <Switch
-                  value={topSeleccionado[`maxEscala${num}`]}
-                  onValueChange={() => handleToggleTop(`maxEscala${num}`)}
-                />
-              </View>
-            </>
-          ))}
+          <TextInput
+            style={styles.inputCell}
+            keyboardType="numeric"
+            value={registroResultado.maxEscala1?.toString() || ""}
+            onChangeText={(value) => handleInputChange("maxEscala1", value)}
+            editable={!topSeleccionado.maxEscala1}
+          />
+          <View style={styles.switchContainer}>
+            <Text style={styles.switchLabel}>Top</Text>
+            <Switch
+              value={topSeleccionado.maxEscala1}
+              onValueChange={() => handleToggleTop("maxEscala1")}
+            />
+          </View>
+          <TextInput
+            style={styles.inputCell}
+            keyboardType="numeric"
+            value={registroResultado.maxEscala2?.toString() || ""}
+            onChangeText={(value) => handleInputChange("maxEscala2", value)}
+            editable={!topSeleccionado.maxEscala2}
+          />
+          <View style={styles.switchContainer}>
+            <Text style={styles.switchLabel}>Top</Text>
+            <Switch
+              value={topSeleccionado.maxEscala2}
+              onValueChange={() => handleToggleTop("maxEscala2")}
+            />
+          </View>
         </View>
       </View>
 

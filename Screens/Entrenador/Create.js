@@ -21,7 +21,7 @@ const CreateEntrenador = () => {
   const loadOptions = async () => {
     try {
       // Cargar provincias
-      const provinciasResponse = await api.get('/api/Provincia');
+      const provinciasResponse = await api.get('/api/Provincium');
       console.log('Datos de provincias:', provinciasResponse.data);
       setListaProvincias(provinciasResponse.data);
 

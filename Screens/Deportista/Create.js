@@ -26,8 +26,8 @@ const CreateDeportista = () => {
     const fetchData = async () => {
       try {
         const [provinciasResponse, categoriasResponse, generosResponse, clubesResponse, entrenadoresResponse] = await Promise.all([
-          api.get('/api/Provincia'),
-          api.get('/api/Categoria'),
+          api.get('/api/Provincium'),
+          api.get('/api/Categorium'),
           api.get('/api/Genero'),
           api.get('/api/Club'),
           api.get('/api/Entrenador'),

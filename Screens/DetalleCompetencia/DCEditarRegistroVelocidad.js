@@ -62,6 +62,59 @@ const DCEditarRegistroResultado = () => {
     setRegistroResultado({ ...registroResultado, [key]: value });
   };
 
+  const handleSalidaFalse = async () => {
+    try {
+      Alert.alert(
+        "Confirmación", // Título
+        "¿Está seguro de la descalificación?", // Mensaje
+        [
+          {
+            text: "Si",
+            onPress: async () => {
+              // Aquí colocas la lógica para actualizar el registro
+              handleDescalificar();
+            },
+          },
+          {
+            text: "No",
+            style: "cancel", // Hace que el botón se vea como opción de cancelación
+          }
+          
+        ]
+      );
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "No se pudo actualizar el registro");
+    }
+  }
+
+  const handleDescalificar = async () => {
+    try {
+      console.log("🙈🙈🙈🙈🙈🙈🙈")
+
+      let regResGuardar = {...registroResultado};
+
+      regResGuardar.registroEditadoT2 = true;
+      regResGuardar.registroEditadoT1 = true;
+      regResGuardar.fallRegistro1 = true;
+      regResGuardar.fallRegistro2 = true;
+      regResGuardar.tiempo1=tiempoOrig1*2;
+      regResGuardar.tiempo2=tiempoOrig2*2;
+      regResGuardar.SalidaFalse=true;
+
+      regResGuardar.registroCompleto=true;
+
+      await api.put(`/api/RegistroResultado/${idRegistroResultado}`, regResGuardar);
+
+      navigation.goBack();
+      navigation.navigate('DCCompetenciaVelocidad', { idCom: idCom, regUpdated: true });
+    }
+    catch (error) {
+      console.error(error); 
+      Alert.alert("Error", "No se pudo actualizar el registro");
+    }
+  }
+
   const handleFallButtonT1 = async (key, value) => {
     
     try {
@@ -182,6 +235,8 @@ const DCEditarRegistroResultado = () => {
       { registroResultado.competencia &&  registroResultado.competencia.idMod==1?" Velocidad":registroResultado.competencia.idMod==2?" Bloque":registroResultado.competencia.idMod==3?" Vias":" Combinada"}
 
       </Text>
+
+      
       
       {/* <Text style={styles.label}>ID Deportista</Text>
       <TextInput
@@ -239,6 +294,11 @@ const DCEditarRegistroResultado = () => {
       <TouchableOpacity style={styles.saveButton} onPress={handleGuardarCambios}>
         <Text style={styles.saveButtonText}>Guardar Cambios</Text>
       </TouchableOpacity>
+      <View style={{ height: 1, backgroundColor: "#ccc", marginVertical: 10 }} />
+
+      <TouchableOpacity style={styles.dangerButton} onPress={handleSalidaFalse}>
+        <Text style={styles.saveButtonText}>Salida en False</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -275,6 +335,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 15,
     backgroundColor: '#28a745',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  dangerButton: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#dc3546',
     borderRadius: 5,
     alignItems: 'center',
   },

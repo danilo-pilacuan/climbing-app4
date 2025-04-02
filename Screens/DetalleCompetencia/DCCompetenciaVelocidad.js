@@ -413,7 +413,7 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
         .slice(0, 16)
         .map((item, index) => ({ ...item, orden: index + 1 }));
 
-        console.log('Clasificados a octavos: 👽👽👽👽👽', clasifOctavos);
+        console.log('Clasificados a octavos: 👽👽👽👽👽🙈🤠', clasifOctavos);
 
         
         const resultsOctavos = clasifOctavos.map((res) => {
@@ -896,11 +896,11 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
               <Text style={styles.label}>Nombres: {item.deportista.nombresDep}</Text>
               <Text style={styles.label}>Apellidos: {item.deportista.apellidosDep}</Text>
               {item.registroEditadoT1 && (
-                <Text style={styles.label}>Tiempo1: {item.fallRegistro1 ? "FALL" : item.tiempo1}</Text>
+                <Text style={styles.label}>Tiempo1: {item.salidaFalse ? "FLS" : (item.fallRegistro1?"FALL":item.tiempo1)}</Text>
               )}
 
               {item.registroEditadoT2 && (
-                <Text style={styles.label}>Tiempo2: {item.fallRegistro2 ? "FALL" : item.tiempo2}</Text>
+                <Text style={styles.label}>Tiempo2: {item.salidaFalse ? "FLS" : (item.fallRegistro2?"FALL":item.tiempo2)}</Text>
               )}
             </View>
             <View style={styles.resBtnContainer}>

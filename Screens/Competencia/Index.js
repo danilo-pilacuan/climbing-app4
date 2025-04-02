@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
-import api from '../../services/api'; // Asegúrate de importar tu instancia de API
+import api from '../../services/api';
 
 const IndexCompetencia = () => {
   const navigation = useNavigation(); // Inicializa useNavigation
@@ -35,7 +35,7 @@ const IndexCompetencia = () => {
   };
 
   const handleCreateCompetencia = () => {
-    navigation.navigate('CrearCompetencia'); // Navega a la pantalla de creación
+    navigation.navigate('CompetenciaCreate'); // Navega a la pantalla de creación
   };
 
   const handleEditCompetencia = (id) => {
@@ -51,6 +51,10 @@ const IndexCompetencia = () => {
       await api.delete(`/api/Competencia/${id}`);
       setCompetencias(competencias.filter(competencia => competencia.IdCom !== id));
       Alert.alert('Éxito', 'Competencia eliminada con éxito');
+      const response = await api.get('/api/Competencia'); // Cambia según tu API
+        console.log('Respuesta de la API:', response.data); // Imprime la respuesta
+        setCompetencias(response.data);        
+
     } catch (err) {
       console.error(err);
       Alert.alert('Error', 'No se pudo eliminar la competencia');

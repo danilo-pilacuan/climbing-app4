@@ -158,7 +158,9 @@ const DCCompetenciaVias = () => {
         "EtapaActual": 1,
         "EtapaSiguiente": 2,
         "NumeroClasificados": 8,
-        "TipoRegistro": 3
+        "TipoRegistro": 3,
+        "MaxPresas1": numPresasR1Final,
+        "MaxPresas2": numPresasR2Final,
       }
 
       const generarFinalesResult = await generarResultadosSiguienteEtapa(resultsFinales);
@@ -211,6 +213,8 @@ const DCCompetenciaVias = () => {
     navigation.navigate("DCEditarRegistroVias", {
       idCom: idCom,
       idRegistroResultado: registro.idRegistroResultado,
+      numPresasR1:registro.maxPresas1,
+      numPresasR2:registro.maxPresas2,
     });
   };
 
@@ -256,6 +260,13 @@ const DCCompetenciaVias = () => {
     console.log("Cambio en competencia!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     console.log(competencia);
 
+    if(competencia!=null && competencia!=undefined){
+    setNumPresasR1Clasif(competencia.numPresasR1ClasifVias??0);
+    setNumPresasR1Final(competencia.numPresasR1FinalVias??0);
+    setNumPresasR2Clasif(competencia.numPresasR2ClasifVias??0);
+    setNumPresasR2Final(competencia.numPresasR2FinalVias??0);
+    }
+
     const handleUpdates = async () => {
       try {
         if (depAdded && addDepsComplete == false && competencia) {
@@ -279,11 +290,17 @@ const DCCompetenciaVias = () => {
                   etapa: 1,
                   tipoRegistro: 3,
                   orden: 0,
-                  maxPresas:competencia.numPresas,
+                  maxPresas1:numPresasR1Clasif,
+                  maxPresas2:numPresasR2Clasif,
                   idMod: competencia.idMod,
                 };
               }
             );
+
+//             numPresasR1Clasif
+// numPresasR2Clasif
+// numPresasR1Final
+// numPresasR2Final
             console.log("Resultados Clasif gennnnnnnnnnnnnnn:", resultsClasif); // Ver los resultados
 
             const generarResult = await generarResultados(resultsClasif);
@@ -465,6 +482,65 @@ numPresasR2Final */}
       case "finales":
         return (
           <View style={styles.faseContainer}>
+            <View style={styles.rutasPresasContainer}>
+              <View style={styles.rowPresasContainer}>
+                <View style={styles.rutasPresasColumn}>
+                  <Text style={styles.label}>Presas Ruta 1</Text>
+                  <TextInput
+                    style={styles.inputCell}
+                    keyboardType="numeric"
+                    value={ competencia.numPresasR1FinalVias?competencia.numPresasR1FinalVias.toString():( numPresasR1Final?.toString() || "")}
+                    onChangeText={(value) =>
+                      setNumPresasR1Final(value.toString())
+                    }
+                    editable={
+                      (!competencia.numPresasR1FinalVias==null
+                        || competencia.numPresasR2FinalVias<=0
+                        || competencia.numPresasR1FinalVias<=0
+                        || !competencia.numPresasR2FinalVias==null)
+                    }
+                  />
+                </View>
+                <View style={styles.rutasPresasColumn}>
+                  <Text style={styles.label}>Presas Ruta 2</Text>
+                  <TextInput
+                    style={styles.inputCell}
+                    keyboardType="numeric"
+                    value={ competencia.numPresasR2FinalVias?competencia.numPresasR2FinalVias.toString():( numPresasR2Final?.toString() || "")}
+                    onChangeText={(value) =>
+                      setNumPresasR2Final(value.toString())
+                    }
+                    editable={
+                      (!competencia.numPresasR1FinalVias==null
+                        || competencia.numPresasR2FinalVias<=0
+                        || competencia.numPresasR1FinalVias<=0
+                         || !competencia.numPresasR2FinalVias==null)
+                    }
+                  />
+                </View>
+              </View>
+              <View style={styles.rowPresasContainer}>
+              <TouchableOpacity
+              style={[
+                styles.guardarPresasButton,
+                !(!competencia.numPresasR1FinalVias==null
+                  || competencia.numPresasR2FinalVias<=0
+                  || competencia.numPresasR1FinalVias<=0
+                   || !competencia.numPresasR2FinalVias==null) && styles.inactiveTab,
+              ]}
+              onPress={()=>handleGuardarNumpresas(
+                {
+                  "numPresasR1FinalVias":Number(numPresasR1Final),
+                  "numPresasR2FinalVias":Number(numPresasR2Final)
+                }
+              )
+              }
+              disabled={!isTerminarFinalEnabled}
+            >
+              <Text style={styles.addButtonText}>Guardar # Presas</Text>
+            </TouchableOpacity>
+              </View>
+            </View>
             <Text style={styles.label}>
               Etapa Final: {regsResFinal.filter((r) => r.etapaCompleta).length}/
               {regsResFinal.length}
@@ -537,18 +613,26 @@ numPresasR2Final */}
                   styles.buttonResult,
                   (item.registroCompleto 
                     || 
-                    (!competencia.numPresasR1ClasifVias==null
+                    ((!competencia.numPresasR1ClasifVias==null
                       || competencia.numPresasR2ClasifVias<=0
                       || competencia.numPresasR1ClasifVias<=0
-                       || !competencia.numPresasR2ClasifVias==null)
+                       || !competencia.numPresasR2ClasifVias==null) && item.etapa==1)
+                    ||((!competencia.numPresasR1FinalVias==null
+                      || competencia.numPresasR2FinalVias<=0
+                      || competencia.numPresasR1FinalVias<=0
+                       || !competencia.numPresasR2FinalVias==null) && item.etapa==2)
                   )&& styles.inactiveTab,
                 ]}
                 onPress={() => handleEditarRegistroRes(item)}
                 disabled={item.registroCompleto || 
-                  (!competencia.numPresasR1ClasifVias==null
+                  ((!competencia.numPresasR1ClasifVias==null
                     || competencia.numPresasR2ClasifVias<=0
                     || competencia.numPresasR1ClasifVias<=0
-                     || !competencia.numPresasR2ClasifVias==null)
+                     || !competencia.numPresasR2ClasifVias==null)&& item.etapa==1)
+                  || ((!competencia.numPresasR1FinalVias==null
+                    || competencia.numPresasR2FinalVias<=0
+                    || competencia.numPresasR1FinalVias<=0
+                     || !competencia.numPresasR2FinalVias==null)&& item.etapa==2)
                 }
               >
                 <Text style={[styles.buttonResultText]}>Agregar</Text>

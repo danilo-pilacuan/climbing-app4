@@ -18,7 +18,7 @@ const CreateEntrenador = () => {
   const loadOptions = async () => {
     try {
       // Cargar provincias
-      const provinciasResponse = await api.get('/api/Provincia');
+      const provinciasResponse = await api.get('/api/Provincium');
       console.log('Datos de provincias:', provinciasResponse.data);
       setListaProvincias(provinciasResponse.data);
       
@@ -90,7 +90,7 @@ const CreateEntrenador = () => {
         >
           <Picker.Item label="--Elija una Provincia--" value="" />
           {listaProvincias.map((provincia) => (
-            <Picker.Item label={provincia.nombre} value={provincia.id} key={provincia.id} />
+            <Picker.Item label={provincia.nombrePro} value={provincia.idPro} key={provincia.idPro} />
           ))}
         </Picker>
 

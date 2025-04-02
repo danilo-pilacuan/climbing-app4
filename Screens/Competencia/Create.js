@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Picker, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity,Alert} from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import api from '../../services/api'; 
 
 const Create = () => {
   const navigation = useNavigation();
   const [competencia, setCompetencia] = useState({
-    nombre: '',
-    fechaInicio: '',
-    fechaFin: '',
+    nombreCom: '',
+    fechaInicioCom: '',
+    fechaFinCom: '',
     idGen: '',
     idJuez: '',
     idCat: '',
     idSede: '',
     idMod: '',
-    activo: '',
+    activoCom: true,
   });
   const [generos, setGeneros] = useState([
     { id: 1, nombre: 'Masculino' },
@@ -32,8 +34,10 @@ const Create = () => {
     { id: 2, nombre: 'Sede 2' },
   ]);
   const [modalidades, setModalidades] = useState([
-    { id: 1, nombre: 'Modalidad 1' },
-    { id: 2, nombre: 'Modalidad 2' },
+    { id: 1, nombre: 'Velocidad' },
+    { id: 2, nombre: 'Bloque' },
+    { id: 3, nombre: 'Vias' },
+    { id: 4, nombre: 'Combinada' },
   ]);
   const [estados, setEstados] = useState([
     { id: 1, nombre: 'Activo' },
@@ -45,6 +49,18 @@ const Create = () => {
     console.log('Crear competencia:', competencia);
     // Navegar a otra pantalla después de crear (opcional)
     // navigation.navigate('Competencias');
+
+    api.post('/api/Competencia', competencia)
+      .then((response) => {
+        console.log('Competencia creada:', response.data);
+        Alert.alert("Competencias", "Competencia creada con éxito");
+        navigation.goBack(); // Regresar a la pantalla anterior
+      })
+      .catch((error) => {
+        console.error('Error al crear competencia:', error);
+        Alert.alert('Error', 'No se pudo crear la competencia');
+      });
+
   };
 
   const handleRegresar = () => {
@@ -61,19 +77,19 @@ const Create = () => {
           style={styles.input}
           placeholder="Nombre"
           value={competencia.nombre}
-          onChangeText={(text) => setCompetencia({ ...competencia, nombre: text })}
+          onChangeText={(text) => setCompetencia({ ...competencia, nombreCom: text })}
         />
         <TextInput
           style={styles.input}
           placeholder="Fecha de Inicio"
           value={competencia.fechaInicio}
-          onChangeText={(text) => setCompetencia({ ...competencia, fechaInicio: text })}
+          onChangeText={(text) => setCompetencia({ ...competencia, fechaInicioCom: text })}
         />
         <TextInput
           style={styles.input}
           placeholder="Fecha de Fin"
           value={competencia.fechaFin}
-          onChangeText={(text) => setCompetencia({ ...competencia, fechaFin: text })}
+          onChangeText={(text) => setCompetencia({ ...competencia, fechaFinCom: text })}
         />
         <Text style={styles.label}>Género:</Text>
         <Picker
@@ -125,16 +141,16 @@ const Create = () => {
             <Picker.Item key={modalidad.id} label={modalidad.nombre} value={modalidad.id} />
           ))}
         </Picker>
-        <Text style={styles.label}>Estado:</Text>
+        {/* <Text style={styles.label}>Estado:</Text>
         <Picker
-          selectedValue={competencia.activo}
-          onValueChange={(itemValue) => setCompetencia({ ...competencia, activo: itemValue })}
+          selectedValue={competencia.activoCom}
+          onValueChange={(itemValue) => setCompetencia({ ...competencia, activoCom: itemValue })}
         >
           <Picker.Item label="--Elija un Estado--" value="" />
           {estados.map((estado) => (
             <Picker.Item key={estado.id} label={estado.nombre} value={estado.id} />
           ))}
-        </Picker>
+        </Picker> */}
         <View style={styles.botonesContainer}>
           <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
             <Text style={styles.botonTexto}>Crear</Text>
