@@ -763,16 +763,9 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
               data={competencia.competenciaDeportistas}
               keyExtractor={(item) => item.id.toString()}
               renderItem={renderDeportistaItem}
-              contentContainerStyle={{ paddingBottom: 20 }}
+              contentContainerStyle={{ paddingBottom: 0 }}
             />
           </View>
-          <TouchableOpacity style={[styles.addButton,
-          competencia.competenciaDeportistas.length > 0 && styles.inactiveTab
-        ]
-          
-        } onPress={handleAgregarDeportistas} disabled={ competencia.competenciaDeportistas.length >0}>
-          <Text style={styles.addButtonText}>Agregar Deportistas</Text>
-        </TouchableOpacity>
           </View>
         );
       case 'resultados':
@@ -787,9 +780,7 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
               contentContainerStyle={{  }}
             />}
           </View>
-          <TouchableOpacity style={[styles.addButton, !isTerminarClasifEnabled && styles.inactiveTab]} onPress={handleTerminarFaseClasif} disabled={!isTerminarClasifEnabled}>
-          <Text style={styles.addButtonText}>Terminar Fase Clasif</Text>
-        </TouchableOpacity>
+
           </View>
         );
       case 'octavos':
@@ -809,9 +800,6 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
             
             }
           </View>
-          <TouchableOpacity style={[styles.addButton, !isTerminarOctavosEnabled && styles.inactiveTab]} onPress={handleTerminarOctavos} disabled={!isTerminarOctavosEnabled}>
-          <Text style={styles.addButtonText}>Terminar Fase</Text>
-        </TouchableOpacity>
           </View>
         );
       case 'cuartos':
@@ -828,9 +816,7 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
           />
             }
           </View>
-          <TouchableOpacity style={[styles.addButton, !isTerminarCuartosEnabled && styles.inactiveTab]} onPress={handleTerminarCuartos} disabled={!isTerminarCuartosEnabled}>
-          <Text style={styles.addButtonText}>Terminar Fase</Text>
-        </TouchableOpacity>
+
           </View>
         );
       case 'semis':
@@ -847,9 +833,7 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
             />
             }
           </View>
-          <TouchableOpacity style={[styles.addButton, !isTerminarSemidEnabled && styles.inactiveTab]} onPress={handleTerminarSemi} disabled={!isTerminarSemidEnabled}>
-          <Text style={styles.addButtonText}>Terminar Fase</Text>
-        </TouchableOpacity>
+
           </View>
         );
       case 'finales':
@@ -870,9 +854,6 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
             
             
           </View>
-          <TouchableOpacity style={[styles.addButton, !isTerminarFinalEnabled && styles.inactiveTab]} onPress={handleTerminarFinal} disabled={!isTerminarFinalEnabled}>
-          <Text style={styles.addButtonText}>Terminar Fase</Text>
-        </TouchableOpacity>
           </View>
         );
       default:
@@ -925,18 +906,7 @@ const renderResultadoItem = ({ item }) => (
           </View>
         </View>
         
-        <TouchableOpacity 
-          style={[
-            styles.resultActionBtn,
-            item.registroCompleto && styles.resultCompletedBtn
-          ]} 
-          onPress={() => handleEditarRegistroRes(item)}
-          disabled={item.registroCompleto}
-        >
-          <Text style={styles.resultActionBtnText}>
-            {item.registroCompleto ? "Completado" : "Agregar"}
-          </Text>
-        </TouchableOpacity>
+
       </View>
     )}
   </View>
@@ -990,19 +960,7 @@ const renderResultadoItem = ({ item }) => (
                     </View>
                   )}
                 </View>
-                
-                <TouchableOpacity 
-                  style={[
-                    styles.actionButton, 
-                    item.registrosVS[0].registroCompleto && styles.disabledButton
-                  ]} 
-                  onPress={() => handleEditarRegistroRes(item.registrosVS[0])}
-                  disabled={item.registrosVS[0].registroCompleto}
-                >
-                  <Text style={styles.actionButtonText}>
-                    {item.registrosVS[0].registroCompleto ? "Completado" : "Agregar"}
-                  </Text>
-                </TouchableOpacity>
+
               </View>
             )}
             
@@ -1045,19 +1003,7 @@ const renderResultadoItem = ({ item }) => (
                     </View>
                   )}
                 </View>
-                
-                <TouchableOpacity 
-                  style={[
-                    styles.actionButton, 
-                    item.registrosVS[1].registroCompleto && styles.disabledButton
-                  ]} 
-                  onPress={() => handleEditarRegistroRes(item.registrosVS[1])}
-                  disabled={item.registrosVS[1].registroCompleto}
-                >
-                  <Text style={styles.actionButtonText}>
-                    {item.registrosVS[1].registroCompleto ? "Completado" : "Agregar"}
-                  </Text>
-                </TouchableOpacity>
+
               </View>
             )}
           </View>
@@ -1433,7 +1379,7 @@ faseContainer:{
 },
 resultadosListContainer:{
   flex:1 ,
-  marginBottom: 60,
+  //marginBottom: 60,
 },
 resVSItem:{
   flexDirection:'column' ,

@@ -55,16 +55,20 @@ const IndexDetalleCompetencia = () => {
   const handleLlenarCompetencia = (item) => {
     console.log("Competencia 👽😡🐳😈🔶🎃:",JSON.stringify(item))
     if(item.idMod==1){
-      navigation.navigate('DCCompetenciaVelocidad', { idCom: item.idCom });
+      //navigation.navigate('DCCompetenciaVelocidad', { idCom: item.idCom });
+      navigation.navigate('ViewCompetenciaVelocidad', { idCom: item.idCom });
     }
     if(item.idMod==2){
-      navigation.navigate('DCCompetenciaBloque', { idCom: item.idCom });
+      //navigation.navigate('DCCompetenciaBloque', { idCom: item.idCom });
+      navigation.navigate('ViewCompetenciaBloque', { idCom: item.idCom });
     }
     if(item.idMod==3){
-      navigation.navigate('DCCompetenciaVias', { idCom: item.idCom });
+      //navigation.navigate('DCCompetenciaVias', { idCom: item.idCom });
+      navigation.navigate('ViewCompetenciaVias', { idCom: item.idCom });
     }
     if(item.idMod==4){
-      navigation.navigate('DCCompetenciaCombinada', { idCom: item.idCom });
+      //navigation.navigate('DCCompetenciaCombinada', { idCom: item.idCom });
+      navigation.navigate('ViewCompetenciaCombinada', { idCom: item.idCom });
     }
   };
 

@@ -15,11 +15,19 @@ const Index = () => {
       </View>
       <View style={styles.carouselContainer}>
         {/* Elementos de texto de prueba en lugar de imágenes */}
-        <Text style={styles.carouselText}>Contenido 1</Text>
+        {/* <Text style={styles.carouselText}>Contenido 1</Text>
         <Text style={styles.carouselText}>Contenido 2</Text>
         <Text style={styles.carouselText}>Contenido 3</Text>
         <Text style={styles.carouselText}>Contenido 4</Text>
-        <Text style={styles.carouselText}>Contenido 5</Text>
+        <Text style={styles.carouselText}>Contenido 5</Text> */}
+
+
+        <Image
+          source={require('../../assets/logo.png')}
+          style={{ width: 350, height: 350, borderRadius: 10 }}
+          PlaceholderContent={<Text>Cargando...</Text>}
+          containerStyle={{ marginBottom: 20 }} // Espacio entre la imagen y el texto
+        />
       </View>
       <Button
         buttonStyle={styles.buttonIniciar}
@@ -49,7 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   customContainer: {
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
     marginBottom: 20,
@@ -61,6 +69,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: 20,
+    textAlign: "center",
+    paddingTop: 30,
+    backgroundColor: "#FFF",
   },
   carouselContainer: {
     flexDirection: "column", // Cambiado a columna para mostrar texto

@@ -312,20 +312,9 @@ const DCCompetenciaCombinada = () => {
                 data={competencia.competenciaDeportistas}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderDeportistaItem}
-                contentContainerStyle={{ paddingBottom: 20 }}
+                contentContainerStyle={{ paddingBottom: 0 }}
               />
             </View>
-            <TouchableOpacity
-              style={[
-                styles.addButton,
-                competencia.competenciaDeportistas.length > 0 &&
-                  styles.inactiveTab,
-              ]}
-              onPress={handleAgregarDeportistas}
-              disabled={competencia.competenciaDeportistas.length > 0}
-            >
-              <Text style={styles.addButtonText}>Agregar Deportistas</Text>
-            </TouchableOpacity>
           </View>
         );
       case "resultados":
@@ -346,16 +335,6 @@ const DCCompetenciaCombinada = () => {
                 />
               )}
             </View>
-            <TouchableOpacity
-              style={[
-                styles.addButton,
-                !isTerminarClasifEnabled && styles.inactiveTab,
-              ]}
-              onPress={handleTerminarFaseClasif}
-              disabled={!isTerminarClasifEnabled}
-            >
-              <Text style={styles.addButtonText}>Terminar Fase</Text>
-            </TouchableOpacity>
           </View>
         );
       case "finales":
@@ -376,16 +355,6 @@ const DCCompetenciaCombinada = () => {
                 />
               )}
             </View>
-            <TouchableOpacity
-              style={[
-                styles.addButton,
-                !isTerminarFinalEnabled && styles.inactiveTab,
-              ]}
-              onPress={handleTerminarFinal}
-              disabled={!isTerminarFinalEnabled}
-            >
-              <Text style={styles.addButtonText}>Terminar Fase</Text>
-            </TouchableOpacity>
           </View>
         );
       default:
@@ -449,18 +418,6 @@ const DCCompetenciaCombinada = () => {
                   </View>
                 </View>
 
-                <View style={styles.resBtnContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.buttonResult,
-                      item.registroCompleto && styles.inactiveTab,
-                    ]}
-                    onPress={() => handleEditarRegistroRes(item)}
-                    disabled={item.registroCompleto}
-                  >
-                    <Text style={[styles.buttonResultText]}>Agregar</Text>
-                  </TouchableOpacity>
-                </View>
               </View>
             </View>
           </View>
@@ -504,18 +461,6 @@ const DCCompetenciaCombinada = () => {
                   </View>
                 </View>
 
-                <View style={styles.resBtnContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.buttonResult,
-                      item.registroCompleto && styles.inactiveTab,
-                    ]}
-                    onPress={() => handleEditarRegistroRes(item)}
-                    disabled={item.registroCompleto}
-                  >
-                    <Text style={[styles.buttonResultText]}>Agregar</Text>
-                  </TouchableOpacity>
-                </View>
               </View>
             </View>
           </View>
@@ -823,7 +768,7 @@ const styles = StyleSheet.create({
   },
   resultadosListContainer: {
     flex: 1,
-    marginBottom: 60,
+    //marginBottom: 60,
   },
   resVSItem: {
     flexDirection: "column",

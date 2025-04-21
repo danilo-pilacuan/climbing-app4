@@ -15,7 +15,7 @@ import {
 
 import api from "../../services/api";
 
-const DCCompetenciaCombinada = () => {
+const DCCompetenciaBloque = () => {
   const route = useRoute();
   const { idCom, depAdded } = route.params; // Accede a los parámetros de la ruta
 
@@ -81,11 +81,9 @@ const DCCompetenciaCombinada = () => {
             response.data
           );
 
-          setRegistrosResultados(
-            response.data
-              .filter((res) => res.etapa == 1)
-              .sort((a, b) => a.orden - b.orden)
-          );
+          setRegistrosResultados(response.data.filter((res) => res.etapa == 1).sort(
+            (a, b) =>a.orden - b.orden
+          ));
 
           if (registrosResultados.length > 0) {
             setIsResultadosActive(true);
@@ -119,11 +117,11 @@ const DCCompetenciaCombinada = () => {
       console.error("Error al generar los resultados: ", error);
     }
   };
-
+  
   const generarResultadosSiguienteEtapa = async (peticionEtapa) => {
     try {
       return await api.post(
-        "/api/RegistroResultado/GenerarRegistrosViasEtapaSiguiente",
+        "/api/RegistroResultado/GenerarRegistrosBouldersEtapaSiguiente",
         peticionEtapa
       );
     } catch (error) {
@@ -142,22 +140,18 @@ const DCCompetenciaCombinada = () => {
     } else {
       console.log("Completados todos los registros");
 
+      
       const resultsFinales = {
-        IdCom: idCom,
-        EtapaActual: 1,
-        EtapaSiguiente: 2,
-        NumeroClasificados: 8,
-        TipoRegistro: 3,
-      };
+        "IdCom": idCom,
+        "EtapaActual": 1,
+        "EtapaSiguiente": 2,
+        "NumeroClasificados": 6,
+        "TipoRegistro": 3
+      }
 
-      const generarFinalesResult = await generarResultadosSiguienteEtapa(
-        resultsFinales
-      );
+      const generarFinalesResult = await generarResultadosSiguienteEtapa(resultsFinales);
       await getRegistrosResultados(idCom);
-      Alert.alert(
-        "Fase Clasificatoria Terminada",
-        "Se han generado los resultados de la siguiente fase"
-      );
+      Alert.alert("Fase Clasificatoria Terminada", "Se han generado los resultados de la siguiente etapa");
     }
     //setIsTerminarClasifEnabled(false)
   };
@@ -174,7 +168,7 @@ const DCCompetenciaCombinada = () => {
     } else {
       const ganador = regsResFinal.find((res) => res.orden == 1);
       console.log("Ganador: 😒😒😒😒😒", ganador);
-
+  
       Alert.alert(
         "Ganador",
         "El ganador es: " +
@@ -182,24 +176,18 @@ const DCCompetenciaCombinada = () => {
           " " +
           ganador.deportista.apellidosDep
       );
-
-      //setIsTerminarFinalEnabled(false);
+  
+      setIsTerminarFinalEnabled(false);
     }
+
+    
   };
 
   const handleEditarRegistroRes = (registro) => {
-    if (registro.etapa == 1) {
-      navigation.navigate("DCEditarRegistroBloqueComb", {
-        idCom: idCom,
-        idRegistroResultado: registro.idRegistroResultado,
-      });
-    }
-    if (registro.etapa == 2) {
-      navigation.navigate("DCEditarRegistroViasComb", {
-        idCom: idCom,
-        idRegistroResultado: registro.idRegistroResultado,
-      });
-    }
+    navigation.navigate("DCEditarRegistroBloque", {
+      idCom: idCom,
+      idRegistroResultado: registro.idRegistroResultado,
+    });
   };
 
   useFocusEffect(
@@ -301,7 +289,15 @@ const DCCompetenciaCombinada = () => {
             <Text style={styles.label}>Nombre de la Competencia:</Text>
             <Text style={styles.value}>{competencia.nombreCom}</Text>
             <Text style={styles.label}>Modalidad Competencia:</Text>
-            <Text style={styles.value}>Combinada</Text>
+            <Text style={styles.value}>
+              {competencia.idMod == 1
+                ? "Velocidad"
+                : competencia.idMod == 2
+                ? "Bloque"
+                : competencia.idMod == 3
+                ? "Vias"
+                : "Combinada"}
+            </Text>
           </View>
         );
       case "deportistas":
@@ -315,17 +311,6 @@ const DCCompetenciaCombinada = () => {
                 contentContainerStyle={{ paddingBottom: 20 }}
               />
             </View>
-            <TouchableOpacity
-              style={[
-                styles.addButton,
-                competencia.competenciaDeportistas.length > 0 &&
-                  styles.inactiveTab,
-              ]}
-              onPress={handleAgregarDeportistas}
-              disabled={competencia.competenciaDeportistas.length > 0}
-            >
-              <Text style={styles.addButtonText}>Agregar Deportistas</Text>
-            </TouchableOpacity>
           </View>
         );
       case "resultados":
@@ -346,16 +331,6 @@ const DCCompetenciaCombinada = () => {
                 />
               )}
             </View>
-            <TouchableOpacity
-              style={[
-                styles.addButton,
-                !isTerminarClasifEnabled && styles.inactiveTab,
-              ]}
-              onPress={handleTerminarFaseClasif}
-              disabled={!isTerminarClasifEnabled}
-            >
-              <Text style={styles.addButtonText}>Terminar Fase</Text>
-            </TouchableOpacity>
           </View>
         );
       case "finales":
@@ -376,16 +351,6 @@ const DCCompetenciaCombinada = () => {
                 />
               )}
             </View>
-            <TouchableOpacity
-              style={[
-                styles.addButton,
-                !isTerminarFinalEnabled && styles.inactiveTab,
-              ]}
-              onPress={handleTerminarFinal}
-              disabled={!isTerminarFinalEnabled}
-            >
-              <Text style={styles.addButtonText}>Terminar Fase</Text>
-            </TouchableOpacity>
           </View>
         );
       default:
@@ -395,134 +360,54 @@ const DCCompetenciaCombinada = () => {
 
   const renderDeportistaItem = ({ item }) => (
     <View style={styles.deportistaItem}>
-      {item.deportista && (
-        <View style={styles.athleteRowContainer}>
-          <View style={styles.athleteInfoContainer}>
-            <Text style={styles.athleteName}>
-              {item.deportista.nombresDep} {item.deportista.apellidosDep}
-            </Text>
-            {item.categoria && (
-              <Text style={styles.categoryText}>{item.categoria}</Text>
-            )}
-          </View>
-        </View>
-      )}
+      <Text style={styles.label}>
+        {item.deportista
+          ? item.deportista.nombresDep + " " + item.deportista.apellidosDep
+          : "Nombre no disponible"}
+      </Text>
     </View>
   );
 
+
   const renderResultadoItem = ({ item }) => {
-    return (
-      <View style={styles.resItem}>
-        {item && item.etapa == 2 && (
+      return (
+        item && (
           <View style={styles.resVSItem}>
             <View style={styles.matchupContainer}>
               <View style={styles.athleteContainer}>
                 <Text style={styles.athleteNumber}>Deportista</Text>
-
+    
                 <View style={styles.athleteInfo}>
                   <View style={styles.infoRow}>
                     <Text style={styles.infoLabel}>Nombres:</Text>
-                    <Text style={styles.infoValue}>
-                      {item.deportista.nombresDep}
-                    </Text>
+                    <Text style={styles.infoValue}>{item.deportista.nombresDep}</Text>
                   </View>
                   <View style={styles.infoRow}>
                     <Text style={styles.infoLabel}>Apellidos:</Text>
-                    <Text style={styles.infoValue}>
-                      {item.deportista.apellidosDep}
-                    </Text>
+                    <Text style={styles.infoValue}>{item.deportista.apellidosDep}</Text>
                   </View>
-
+    
                   {item.orden < 100 && (
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Puesto:</Text>
                       <Text style={styles.infoValue}>{item.orden}</Text>
                     </View>
                   )}
-
+    
                   <View style={styles.infoRow}>
                     <Text style={styles.infoLabel}>Resultados:</Text>
                     <Text style={styles.infoValue}>
-                      {item.labelMaxEscala1}({item.rankingVia1}) -{" "}
-                      {item.puntajeCombinadaVia}
+                      {item.labelMaxEscala1} ({item.rankingVia1}) - {item.labelMaxEscala2} ({item.rankingVia2})
                     </Text>
                   </View>
                 </View>
-
-                <View style={styles.resBtnContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.buttonResult,
-                      item.registroCompleto && styles.inactiveTab,
-                    ]}
-                    onPress={() => handleEditarRegistroRes(item)}
-                    disabled={item.registroCompleto}
-                  >
-                    <Text style={[styles.buttonResultText]}>Agregar</Text>
-                  </TouchableOpacity>
-                </View>
+    
               </View>
             </View>
           </View>
-        )}
-
-        {item && item.etapa == 1 && (
-          <View style={styles.resVSItem}>
-            <View style={styles.matchupContainer}>
-              <View style={styles.athleteContainer}>
-                <Text style={styles.athleteNumber}>Deportista</Text>
-
-                <View style={styles.athleteInfo}>
-                  <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Nombres:</Text>
-                    <Text style={styles.infoValue}>
-                      {item.deportista.nombresDep}
-                    </Text>
-                  </View>
-                  <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Apellidos:</Text>
-                    <Text style={styles.infoValue}>
-                      {item.deportista.apellidosDep}
-                    </Text>
-                  </View>
-
-                  {item.orden < 100 && (
-                    <View style={styles.infoRow}>
-                      <Text style={styles.infoLabel}>Puesto:</Text>
-                      <Text style={styles.infoValue}>{item.orden}</Text>
-                    </View>
-                  )}
-
-                  <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Resultados:</Text>
-                    <Text style={styles.infoValue}>
-                      {item.totalTops}T {item.totalZonas}HZ {item.totalZonasL}LZ{" "}
-                      {item.intentosTops} {item.intentosZonas}{" "}
-                      {item.intentosZonasL} (
-                      {item.puntajeCombinadaBloque?.toFixed(2)})
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.resBtnContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.buttonResult,
-                      item.registroCompleto && styles.inactiveTab,
-                    ]}
-                    onPress={() => handleEditarRegistroRes(item)}
-                    disabled={item.registroCompleto}
-                  >
-                    <Text style={[styles.buttonResultText]}>Agregar</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-        )}
-      </View>
-    );
-  };
+        )
+      );
+    };
 
   if (loading) {
     return <Text style={styles.loadingText}>Cargando...</Text>;
@@ -541,7 +426,7 @@ const DCCompetenciaCombinada = () => {
   return (
     <View style={styles.container}>
       <View style={styles.detailContainer}>
-        <Text style={styles.title}>Detalle Competencia Combinada</Text>
+        <Text style={styles.title}>Detalle Competencia Bloque</Text>
         <TouchableOpacity
           style={[
             styles.tab,
@@ -605,7 +490,7 @@ const DCCompetenciaCombinada = () => {
                 styles.activeTabText,
             ]}
           >
-            Resultados Bloque
+            Resultados Clasif.
           </Text>
         </TouchableOpacity>
       </View>
@@ -631,7 +516,7 @@ const DCCompetenciaCombinada = () => {
                 styles.activeTabText,
             ]}
           >
-            Resultados Vias
+            Resultados Final
           </Text>
         </TouchableOpacity>
       </View>
@@ -823,7 +708,7 @@ const styles = StyleSheet.create({
   },
   resultadosListContainer: {
     flex: 1,
-    marginBottom: 60,
+    //marginBottom: 60,
   },
   resVSItem: {
     flexDirection: "column",
@@ -850,226 +735,139 @@ const styles = StyleSheet.create({
   resVSItem: {
     marginBottom: 15,
     borderRadius: 8,
-    overflow: "hidden",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-
+  
   roundTitle: {
-    backgroundColor: "#3498db",
-    color: "white",
-    fontWeight: "bold",
+    backgroundColor: '#3498db',
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 16,
     padding: 10,
-    textAlign: "center",
+    textAlign: 'center',
   },
-
+  
   matchupContainer: {
     padding: 10,
   },
-
+  
   horizontalMatchup: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "stretch",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
   },
-
+  
   athleteContainer: {
     flex: 1,
     padding: 10,
     borderRadius: 6,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: '#f8f9fa',
     borderWidth: 1,
-    borderColor: "#eaeaea",
+    borderColor: '#eaeaea',
   },
-
+  
   winnerContainer: {
-    backgroundColor: "rgba(46, 204, 113, 0.1)",
-    borderColor: "#2ecc71",
+    backgroundColor: 'rgba(46, 204, 113, 0.1)',
+    borderColor: '#2ecc71',
     borderWidth: 1,
   },
-
+  
   athleteNumber: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 15,
-    color: "#34495e",
-    textAlign: "center",
+    color: '#34495e',
+    textAlign: 'center',
     marginBottom: 8,
-    backgroundColor: "#ecf0f1",
+    backgroundColor: '#ecf0f1',
     padding: 5,
     borderRadius: 4,
   },
-
+  
   athleteInfo: {
     marginBottom: 8,
   },
-
+  
   infoRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingVertical: 2,
   },
-
+  
   infoLabel: {
     width: 70,
     marginRight: 5,
     fontSize: 13,
-    color: "#7f8c8d",
+    color: '#7f8c8d',
   },
-
+  
   infoValue: {
     flex: 1,
     fontSize: 13,
-    color: "#2c3e50",
+    color: '#2c3e50',
   },
-
+  
   timeRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 4,
-    backgroundColor: "#e8f4f8",
+    backgroundColor: '#e8f4f8',
     padding: 5,
     borderRadius: 4,
   },
-
+  
   timeLabel: {
     fontSize: 13,
-    color: "#2980b9",
+    color: '#2980b9',
     marginRight: 5,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
-
+  
   timeValue: {
     fontSize: 13,
-    fontWeight: "bold",
-    color: "#2c3e50",
+    fontWeight: 'bold',
+    color: '#2c3e50',
   },
-
+  
   fallValue: {
-    color: "#e74c3c",
+    color: '#e74c3c',
   },
-
+  
   actionButton: {
-    backgroundColor: "#3498db",
+    backgroundColor: '#3498db',
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 4,
-    alignItems: "center",
+    alignItems: 'center',
   },
-
+  
   actionButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 13,
-    textAlign: "center",
+    textAlign: 'center',
   },
-
+  
   disabledButton: {
-    backgroundColor: "#95a5a6",
+    backgroundColor: '#95a5a6',
   },
-
+  
   vsContainer: {
     width: 40,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-
+  
   vsText: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#e74c3c",
+    fontWeight: 'bold',
+    color: '#e74c3c',
   },
   singleAthleteItem: {
-    marginBottom: 8,
-    borderRadius: 8,
-    overflow: "hidden",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-
-  athleteRowLayout: {
-    flexDirection: "row",
-    padding: 12,
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderLeftWidth: 3,
-    borderLeftColor: "#3498db",
-  },
-
-  mainInfoSection: {
-    flex: 1,
-  },
-
-  athleteFullName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#2c3e50",
-    marginBottom: 6,
-  },
-
-  resultsSection: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-
-  timeDataBlock: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    marginRight: 10,
-    marginTop: 4,
-  },
-
-  timeLabelText: {
-    fontSize: 14,
-    color: "#7f8c8d",
-    marginRight: 5,
-  },
-
-  timeValueText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#2c3e50",
-  },
-
-  fallIndicator: {
-    color: "#e74c3c", // Rojo para caídas
-  },
-
-  falseStartStyle: {
-    color: "#f39c12", // Naranja para salida en falso
-  },
-
-  resultActionBtn: {
-    backgroundColor: "#3498db",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 4,
-    minWidth: 90,
-    alignItems: "center",
-  },
-
-  resultActionBtnText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 14,
-    textAlign: "center",
-  },
-
-  resultCompletedBtn: {
-    backgroundColor: "#95a5a6",
-  },
-  deportistaItem: {
     marginBottom: 8,
     borderRadius: 8,
     overflow: 'hidden',
@@ -1080,7 +878,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  athleteRowContainer: {
+  
+  athleteRowLayout: {
     flexDirection: 'row',
     padding: 12,
     justifyContent: 'space-between',
@@ -1088,20 +887,55 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: '#3498db',
   },
-  athleteInfoContainer: {
+  
+  mainInfoSection: {
     flex: 1,
   },
-  athleteName: {
+  
+  athleteFullName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: 3,
+    marginBottom: 6,
   },
-  categoryText: {
+  
+  resultsSection: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  
+  timeDataBlock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    marginRight: 10,
+    marginTop: 4,
+  },
+  
+  timeLabelText: {
     fontSize: 14,
     color: '#7f8c8d',
+    marginRight: 5,
   },
-  actionButton: {
+  
+  timeValueText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+  },
+  
+  fallIndicator: {
+    color: '#e74c3c',  // Rojo para caídas
+  },
+  
+  falseStartStyle: {
+    color: '#f39c12',  // Naranja para salida en falso
+  },
+  
+  resultActionBtn: {
     backgroundColor: '#3498db',
     paddingVertical: 8,
     paddingHorizontal: 15,
@@ -1109,12 +943,17 @@ const styles = StyleSheet.create({
     minWidth: 90,
     alignItems: 'center',
   },
-  actionButtonText: {
+  
+  resultActionBtnText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 14,
     textAlign: 'center',
-  }
+  },
+  
+  resultCompletedBtn: {
+    backgroundColor: '#95a5a6',
+  },
 });
 
-export default DCCompetenciaCombinada;
+export default DCCompetenciaBloque;

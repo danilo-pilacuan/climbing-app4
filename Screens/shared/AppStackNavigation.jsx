@@ -9,6 +9,7 @@ import BienvenidaStackNavigation from '../Home/Bienvenida';
 import JuezStackNavigation from './JuezStackNavigation';
 import EntrenadorStackNavigation from './EntrenadorStackNavigation';
 import DetalleCompetenciaStackNavigation from './DetalleCompetenciaStackNavigation';
+import useAppStorageHook from './../../storage/appStorage';
 
 const Drawer = createDrawerNavigator();
 
@@ -16,6 +17,8 @@ const CustomDrawerContent = ({ navigation }) => {
   const [isInfraExpanded, setIsInfraExpanded] = useState(false);
   const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false);
   const [isCompetenciasExpanded, setIsCompetenciasExpanded] = useState(false);
+
+  const {appUser,unsetAppUser,setAppUser} = useAppStorageHook();
 
   return (
     <View style={{ flex: 1 }}>
@@ -25,12 +28,18 @@ const CustomDrawerContent = ({ navigation }) => {
       </TouchableOpacity>
 
       {/* Gestión de Participantes */}
-      <TouchableOpacity
-        onPress={() => setIsParticipantsExpanded(!isParticipantsExpanded)}
-        style={styles.collapsibleHeader}
-      >
-        <Text style={styles.drawerItem}>Gestión de Participantes</Text>
-      </TouchableOpacity>
+      
+
+      {
+        appUser != null && appUser.rolesUsu != "Administrador" &&
+        <TouchableOpacity
+                onPress={() => setIsParticipantsExpanded(!isParticipantsExpanded)}
+                style={styles.collapsibleHeader}
+              >
+                <Text style={styles.drawerItem}>Gestión de Participantes</Text>
+              </TouchableOpacity>
+        
+      }
 
       {/* Opciones del menú colapsable para Participantes */}
       {isParticipantsExpanded && (
@@ -48,12 +57,18 @@ const CustomDrawerContent = ({ navigation }) => {
       )}
 
       {/* Gestión de Infraestructura */}
-      <TouchableOpacity
+
+      {
+        appUser != null && appUser.rolesUsu == "Administrador" &&
+        <TouchableOpacity
         onPress={() => setIsInfraExpanded(!isInfraExpanded)}
         style={styles.collapsibleHeader}
       >
         <Text style={styles.drawerItem}>Gestión de Infraestructura</Text>
       </TouchableOpacity>
+      }
+
+      
 
       {/* Opciones del menú colapsable para Infraestructura */}
       {isInfraExpanded && (
@@ -71,12 +86,16 @@ const CustomDrawerContent = ({ navigation }) => {
       )}
 
       {/* Gestión de Competencias */}
-      <TouchableOpacity
+      {
+        appUser != null && appUser.rolesUsu == "Administrador" &&
+        <TouchableOpacity
         onPress={() => setIsCompetenciasExpanded(!isCompetenciasExpanded)}
         style={styles.collapsibleHeader}
       >
         <Text style={styles.drawerItem}>Gestión de Competencias</Text>
       </TouchableOpacity>
+      }
+      
 
       {/* Opciones del menú colapsable para Competencias */}
       {isCompetenciasExpanded && (
@@ -84,9 +103,9 @@ const CustomDrawerContent = ({ navigation }) => {
           <TouchableOpacity onPress={() => navigation.navigate('DetalleCompetencia')}>
             <Text style={styles.subItem}>Agregar Deportistas</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('CompetenciaAgregarResultados')}>
+          {/* <TouchableOpacity onPress={() => navigation.navigate('CompetenciaAgregarResultados')}>
             <Text style={styles.subItem}>Agregar Resultados</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
     </View>

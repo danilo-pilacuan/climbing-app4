@@ -1,35 +1,124 @@
-import React from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+// Screens/Home/Index.js
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {Button, Image} from '@rneui/base';
+import { useNavigation } from '@react-navigation/native';
+import connectSignalR from "./../../services/signalRService";
 
-const Competencias=() =>{
+
+const Index = () => {
+  const navigation = useNavigation();
+
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const initConnection = async () => {
+      const connection = await connectSignalR((newMessage) => {
+        setMessages((prev) => [...prev, newMessage]);
+      });
+
+      // Almacenar la conexión para poder enviar mensajes luego
+      global.signalRConnection = connection;
+    };
+
+    initConnection();
+  }, []);
+
+  const sendMessage = async () => {
+    if (global.signalRConnection) {
+      await global.signalRConnection.send("SendMessage", "Usuario1", "¡Hola desde React Native!");
+    }
+  };
+
   return (
-    <View >
-        <Text style={styles.title}>Soy la página de COMPETENCIAS</Text>        
+    // <ScrollView style={styles.container}>
+    //   <View style={styles.customContainer}>
+    //     <Text style={styles.title}>ESCALADA DEPORTIVA DE IMBABURA</Text>
+    //   </View>
+    //   <View style={styles.carouselContainer}>
+    //     {/* Elementos de texto de prueba en lugar de imágenes */}
+    //     <Text style={styles.carouselText}>Contenido 1</Text>
+    //     <Text style={styles.carouselText}>Contenido 2</Text>
+    //     <Text style={styles.carouselText}>Contenido 3</Text>
+    //     <Text style={styles.carouselText}>Contenido 4</Text>
+    //     <Text style={styles.carouselText}>Contenido 5</Text>
+    //   </View>
+    //   <Button
+    //     buttonStyle={styles.buttonIniciar}
+    //     containerStyle={styles.buttonContainer}
+    //     title={"Iniciar Sesión"}
+    //     onPress={() => {
+    //       //navigate('RecoverScreen');
+    //       navigation.navigate("LoginScreen");
+    //     }}
+    //   />
+    //   <Button
+    //     buttonStyle={styles.buttonComp}
+    //     containerStyle={styles.buttonContainer}
+    //     title={"Competencias en Vivo"}
+    //     onPress={() => {
+    //       //navigate('RecoverScreen');
+    //       navigation.navigate("CompetenciasScreen");
+    //     }}
+    //   />
+    // </ScrollView>
+
+    <View>
+      <Text>📡 Mensajes en Tiempo Real:</Text>
+      {messages.map((msg, index) => (
+        <Text key={index}>{`${msg.message}`}</Text>
+      ))}
+      <Button title="Enviar Mensaje" onPress={sendMessage} />
     </View>
+
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
-  alert: {
-    backgroundColor: '#dff0d8',
-    borderColor: '#d6e9c6',
-    borderWidth: 1,
-    padding: 20,
+  customContainer: {
+    backgroundColor: "#f8f9fa",
     borderRadius: 10,
+    padding: 20,
+    marginBottom: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#3e8e41',
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 20,
+  },
+  carouselContainer: {
+    flexDirection: "column", // Cambiado a columna para mostrar texto
+    paddingVertical: 20,
+    alignItems: "center", // Centra el contenido horizontalmente
+  },
+  carouselText: {
+    fontSize: 18,
+    marginVertical: 10, // Espaciado vertical entre textos
+    color: "#555",
+  },
+  buttonIniciar: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    textAlign: 'center',
+    borderRadius: 10,
+    backgroundColor: '#007bff',
+    margin:10,
+  },
+  buttonComp: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    textAlign: 'center',
+    borderRadius: 10,
+    backgroundColor: '#ffc107',
+    margin:10,
   },
 });
 
-export default Competencias;
-
-
+export default Index;

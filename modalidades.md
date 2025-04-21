@@ -53,6 +53,7 @@ Velocidad
 - Falta realizar Fall ✅
 - Salida en Falso (FLS) -> FLS es descalificado ✅
 - Implementar el reporte en pdf  ✅
+- Implementar reporte  ✅
 - Abreviar clasificatorias 
 
 Bloque
@@ -67,10 +68,10 @@ Vias
 - Reporte 
 
 Combinada
-- Calcular bien puntajes en bloque
-- En via que el número de presa sea distinto al top y agregar el número de presas
-- Que se sumen los dos puntajes para calcular el ganador
-- Reporte
+- Calcular bien puntajes en bloque 
+- En via que el número de presa sea distinto al top y agregar el número de presas 
+- Que se sumen los dos puntajes para calcular el ganador 
+- Reporte 
 
 - Reparar crud de competencias
 - Reparar todo lo que no funciona

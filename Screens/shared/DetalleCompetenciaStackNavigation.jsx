@@ -4,10 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import DetalleCompetenciaIndex from '../DetalleCompetencia/Index';
 import DCCompetenciaVelocidad from '../DetalleCompetencia/DCCompetenciaVelocidad';
+import DCCompetenciaBloque from '../DetalleCompetencia/DCCompetenciaBloque';
 import DCCompetenciaVias from '../DetalleCompetencia/DCCompetenciaVias';
 import DCCompetenciaCombinada from '../DetalleCompetencia/DCCompetenciaCombinada';
+import ViewCompetenciaVelocidad from '../DetalleCompetencia/ViewCompetenciaVelocidad';
+import ViewCompetenciaBloque from '../DetalleCompetencia/ViewCompetenciaBloque';
+import ViewCompetenciaVias from '../DetalleCompetencia/ViewCompetenciaVias';
+import ViewCompetenciaCombinada from '../DetalleCompetencia/ViewCompetenciaCombinada';
 import DCAgregarDeportistas from '../DetalleCompetencia/DCAgregarDeportistas';
-import DCCompetenciaBloque from '../DetalleCompetencia/DCCompetenciaBloque';
 import DCEditarRegistroVelocidad from '../DetalleCompetencia/DCEditarRegistroVelocidad';
 import DCEditarRegistroBloque from '../DetalleCompetencia/DCEditarRegistroBloque';
 import DCEditarRegistroViasComb from '../DetalleCompetencia/DCEditarRegistroViasComb';
@@ -32,9 +36,13 @@ const DetalleCompetenciaStackNavigation = () => {
             <Stack.Screen name="DetalleCompetenciaIndex" component={DetalleCompetenciaIndex} options={{ headerShown: false }} />
             <Stack.Screen name="DCCompetenciaVelocidad" component={DCCompetenciaVelocidad} options={{ headerShown: false }} />
             <Stack.Screen name="DCCompetenciaCombinada" component={DCCompetenciaCombinada} options={{ headerShown: false }} />
-            <Stack.Screen name="DCAgregarDeportistas" component={DCAgregarDeportistas} options={{ headerShown: false }} />
             <Stack.Screen name="DCCompetenciaBloque" component={DCCompetenciaBloque} options={{ headerShown: false }} />
             <Stack.Screen name="DCCompetenciaVias" component={DCCompetenciaVias} options={{ headerShown: false }} />
+            <Stack.Screen name="ViewCompetenciaVelocidad" component={ViewCompetenciaVelocidad} options={{ headerShown: false }} />
+            <Stack.Screen name="ViewCompetenciaCombinada" component={ViewCompetenciaCombinada} options={{ headerShown: false }} />
+            <Stack.Screen name="ViewCompetenciaBloque" component={ViewCompetenciaBloque} options={{ headerShown: false }} />
+            <Stack.Screen name="ViewCompetenciaVias" component={ViewCompetenciaVias} options={{ headerShown: false }} />
+            <Stack.Screen name="DCAgregarDeportistas" component={DCAgregarDeportistas} options={{ headerShown: false }} />
             <Stack.Screen name="DCEditarRegistroVelocidad" component={DCEditarRegistroVelocidad} options={{ headerShown: false }} />
             <Stack.Screen name="DCEditarRegistroVias" component={DCEditarRegistroVias} options={{ headerShown: false }} />
             <Stack.Screen name="DCEditarRegistroBloque" component={DCEditarRegistroBloque} options={{ headerShown: false }} />
