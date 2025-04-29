@@ -31,7 +31,7 @@ const CustomDrawerContent = ({ navigation }) => {
       
 
       {
-        appUser != null && appUser.rolesUsu != "Administrador" &&
+        appUser != null && (appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Entrenador") &&
         <TouchableOpacity
                 onPress={() => setIsParticipantsExpanded(!isParticipantsExpanded)}
                 style={styles.collapsibleHeader}
@@ -42,7 +42,7 @@ const CustomDrawerContent = ({ navigation }) => {
       }
 
       {/* Opciones del menú colapsable para Participantes */}
-      {isParticipantsExpanded && (
+      {isParticipantsExpanded && (appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Entrenador") &&(
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('Deportista')}>
             <Text style={styles.subItem}>Deportista</Text>
@@ -59,7 +59,7 @@ const CustomDrawerContent = ({ navigation }) => {
       {/* Gestión de Infraestructura */}
 
       {
-        appUser != null && appUser.rolesUsu == "Administrador" &&
+        appUser != null && (appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Entrenador") &&
         <TouchableOpacity
         onPress={() => setIsInfraExpanded(!isInfraExpanded)}
         style={styles.collapsibleHeader}
@@ -71,7 +71,7 @@ const CustomDrawerContent = ({ navigation }) => {
       
 
       {/* Opciones del menú colapsable para Infraestructura */}
-      {isInfraExpanded && (
+      {isInfraExpanded && (appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Entrenador") && (
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('Clubes')}>
             <Text style={styles.subItem}>Clubes</Text>
@@ -87,7 +87,7 @@ const CustomDrawerContent = ({ navigation }) => {
 
       {/* Gestión de Competencias */}
       {
-        appUser != null && appUser.rolesUsu == "Administrador" &&
+        appUser != null && (appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Entrenador") &&
         <TouchableOpacity
         onPress={() => setIsCompetenciasExpanded(!isCompetenciasExpanded)}
         style={styles.collapsibleHeader}
@@ -98,7 +98,7 @@ const CustomDrawerContent = ({ navigation }) => {
       
 
       {/* Opciones del menú colapsable para Competencias */}
-      {isCompetenciasExpanded && (
+      {isCompetenciasExpanded && (appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Entrenador") && (
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('DetalleCompetencia')}>
             <Text style={styles.subItem}>Agregar Deportistas</Text>
@@ -108,6 +108,17 @@ const CustomDrawerContent = ({ navigation }) => {
           </TouchableOpacity> */}
         </View>
       )}
+
+
+      {
+        appUser != null && 
+        <TouchableOpacity
+        onPress={() => setAppUser(null)}
+        style={styles.collapsibleHeader}
+      >
+        <Text style={styles.drawerItem}>Cerrar Sesión</Text>
+      </TouchableOpacity>
+      }
     </View>
   );
 };

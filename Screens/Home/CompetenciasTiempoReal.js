@@ -1,11 +1,9 @@
-import React, { useState, useEffect,useCallback  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
 import api from '../../services/api'; // Asegúrate de importar tu instancia de API
 
 import { Button, Linking } from 'react-native';
-
-import useAppStorageHook from './../../storage/appStorage';
 
 const IndexDetalleCompetencia = () => {
   const navigation = useNavigation(); // Inicializa useNavigation
@@ -14,53 +12,22 @@ const IndexDetalleCompetencia = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {appUser,unsetAppUser,setAppUser} = useAppStorageHook();
+  useEffect(() => {
+    const fetchCompetencias = async () => {
+      try {
+        const response = await api.get('/api/Competencia'); // Cambia según tu API
+        console.log('Respuesta de la API:', response.data); // Imprime la respuesta
+        setCompetencias(response.data);        
+      } catch (err) {
+        console.error(err);
+        setError('Error al cargar las competencias');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
-
-      const fetchCompetencias = async () => {
-        try {
-          setLoading(true);
-          const response = await api.get('/api/Competencia');
-          if (isActive) {
-            console.log('Respuesta de la API:', response.data);
-            setCompetencias(response.data);
-          }
-        } catch (err) {
-          console.error(err);
-          if (isActive) setError('Error al cargar las competencias');
-        } finally {
-          if (isActive) setLoading(false);
-        }
-      };
-
-      fetchCompetencias();
-
-      return () => {
-        isActive = false; // Limpieza para evitar actualización de estado si el componente se desmonta
-      };
-    }, [])
-  );
-
-
-  // useEffect(() => {
-  //   const fetchCompetencias = async () => {
-  //     try {
-  //       const response = await api.get('/api/Competencia'); // Cambia según tu API
-  //       console.log('Respuesta de la API:', response.data); // Imprime la respuesta
-  //       setCompetencias(response.data);        
-  //     } catch (err) {
-  //       console.error(err);
-  //       setError('Error al cargar las competencias');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchCompetencias();
-  // }, []);
+    fetchCompetencias();
+  }, []);
 
   const handleSearch = () => {
     const filtered = competencias.filter(competencia =>
@@ -88,20 +55,20 @@ const IndexDetalleCompetencia = () => {
   const handleLlenarCompetencia = (item) => {
     console.log("Competencia 👽😡🐳😈🔶🎃:",JSON.stringify(item))
     if(item.idMod==1){
-      navigation.navigate('DCCompetenciaVelocidad', { idCom: item.idCom });
-      //navigation.navigate('ViewCompetenciaVelocidad', { idCom: item.idCom });
+      //navigation.navigate('DCCompetenciaVelocidad', { idCom: item.idCom });
+      navigation.navigate('ViewCompetenciaVelocidad', { idCom: item.idCom });
     }
     if(item.idMod==2){
-      navigation.navigate('DCCompetenciaBloque', { idCom: item.idCom });
-      //navigation.navigate('ViewCompetenciaBloque', { idCom: item.idCom });
+      //navigation.navigate('DCCompetenciaBloque', { idCom: item.idCom });
+      navigation.navigate('ViewCompetenciaBloque', { idCom: item.idCom });
     }
     if(item.idMod==3){
-      navigation.navigate('DCCompetenciaVias', { idCom: item.idCom });
-      //navigation.navigate('ViewCompetenciaVias', { idCom: item.idCom });
+      //navigation.navigate('DCCompetenciaVias', { idCom: item.idCom });
+      navigation.navigate('ViewCompetenciaVias', { idCom: item.idCom });
     }
     if(item.idMod==4){
-      navigation.navigate('DCCompetenciaCombinada', { idCom: item.idCom });
-      //navigation.navigate('ViewCompetenciaCombinada', { idCom: item.idCom });
+      //navigation.navigate('DCCompetenciaCombinada', { idCom: item.idCom });
+      navigation.navigate('ViewCompetenciaCombinada', { idCom: item.idCom });
     }
   };
 
@@ -140,25 +107,15 @@ const IndexDetalleCompetencia = () => {
       <Text style={styles.value}>{item.fechaInicioCom}</Text>
       <Text style={styles.label}>Fecha de Finalización:</Text>
       <Text style={styles.value}>{item.fechaFinCom}</Text>
-
+      {/* <Text style={styles.label}>Categoría:</Text>
+      <Text style={styles.value}>{item.nombreCom}</Text>
+      <Text style={styles.label}>Nombre de la Competencia:</Text>
+      <Text style={styles.value}>{item.nombreCom}</Text> */}
+      
+      {/* Botones para Editar y Eliminar */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={[styles.button,styles.warningBtn]} onPress={() => handleLlenarCompetencia(item)}>
-          <Text style={styles.buttonText}>Llenar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button]} onPress={() => handleDescargarReporte(item.idCom)}>
-          <Text style={styles.buttonText}>Reporte</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-        style={[
-          styles.button, styles.deleteButton,
-          !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez") && styles.inactiveButton,
-        ]}
-        disabled={!(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
-
-        onPress={() => handleDeshabilitarCompetencia(item.idCom)} >
-          <Text style={[styles.buttonText,
-            !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez") && styles.inactiveButtonText
-          ]}>Deshabilitar</Text>
+          <Text style={styles.buttonText}>Visualizar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -289,12 +246,6 @@ const styles = StyleSheet.create({
        textAlign:'center' ,
        fontWeight:'bold' ,
    },
-   inactiveButton: {
-      backgroundColor: "#D3D3D3", // Color de fondo para botones desactivados
-    },
-    inactiveButtonText: {
-        color: "#A9A9A9", // Color de texto para botones desactivados
-      },
 });
 
 export default IndexDetalleCompetencia;

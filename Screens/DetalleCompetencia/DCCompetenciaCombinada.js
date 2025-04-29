@@ -15,7 +15,11 @@ import {
 
 import api from "../../services/api";
 
+import useAppStorageHook from './../../storage/appStorage';
+
 const DCCompetenciaCombinada = () => {
+  const {appUser,unsetAppUser,setAppUser} = useAppStorageHook();
+  
   const route = useRoute();
   const { idCom, depAdded } = route.params; // Accede a los parámetros de la ruta
 
@@ -349,10 +353,10 @@ const DCCompetenciaCombinada = () => {
             <TouchableOpacity
               style={[
                 styles.addButton,
-                !isTerminarClasifEnabled && styles.inactiveTab,
+                (!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.inactiveTab,
               ]}
               onPress={handleTerminarFaseClasif}
-              disabled={!isTerminarClasifEnabled}
+              disabled={!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Terminar Fase</Text>
             </TouchableOpacity>
@@ -379,10 +383,10 @@ const DCCompetenciaCombinada = () => {
             <TouchableOpacity
               style={[
                 styles.addButton,
-                !isTerminarFinalEnabled && styles.inactiveTab,
+                (!isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.inactiveTab,
               ]}
               onPress={handleTerminarFinal}
-              disabled={!isTerminarFinalEnabled}
+              disabled={!isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Terminar Fase</Text>
             </TouchableOpacity>

@@ -3,10 +3,13 @@ import { View, Text, FlatList, Alert, StyleSheet, TouchableOpacity } from 'react
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'; 
 
 import api from '../../services/api'; 
+import useAppStorageHook from './../../storage/appStorage';
 
 
 const DCCompetenciaVelocidad = () => {
   const route = useRoute();
+  const {appUser,unsetAppUser,setAppUser} = useAppStorageHook();
+
   const { idCom, depAdded } = route.params; // Accede a los parámetros de la ruta
 
   const navigation = useNavigation();
@@ -405,22 +408,46 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
       return;
     }
     else{
-      
+      let numSlices=16;
+
+      let numRegistros = registrosResultados.length;
+
+      if(numRegistros>=16){
+        numSlices=16;
+      }
+
+      if(numRegistros<16 && numRegistros>=8){
+        numSlices=8;
+      }
+
+      if(numRegistros<8 && numRegistros>=4){
+        numSlices=4;
+      }
+
       //Aqui se verifica si la competencia es de velocidad y se calcula octavos
       if(competencia.idMod==1){
         const clasifOctavos = registrosResultados
-        .sort((a, b) => (a.tiempo1 + a.tiempo2) - (b.tiempo1 + b.tiempo2))
-        .slice(0, 16)
+        .sort((a, b) => Math.min(a.tiempo1, a.tiempo2) - Math.min(b.tiempo1, b.tiempo2))
+        .slice(0, numSlices)
         .map((item, index) => ({ ...item, orden: index + 1 }));
 
         console.log('Clasificados a octavos: 👽👽👽👽👽🙈🤠', clasifOctavos);
 
+        let numEtapaTarget=2;
         
+        if(numSlices==8){
+          numEtapaTarget=3;
+        }
+
+        if(numSlices==4){
+          numEtapaTarget=4;
+        }
+
         const resultsOctavos = clasifOctavos.map((res) => {
           return {
             idCom: idCom,
             idDep: res.idDep,
-            etapa: 2,
+            etapa: numEtapaTarget,
             tipoRegistro: 2,
             orden: res.orden
           };
@@ -787,7 +814,9 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
               contentContainerStyle={{  }}
             />}
           </View>
-          <TouchableOpacity style={[styles.addButton, !isTerminarClasifEnabled && styles.inactiveTab]} onPress={handleTerminarFaseClasif} disabled={!isTerminarClasifEnabled}>
+          
+          <TouchableOpacity style={[styles.addButton, (!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.inactiveTab]} 
+          onPress={handleTerminarFaseClasif} disabled={!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}>
           <Text style={styles.addButtonText}>Terminar Fase Clasif</Text>
         </TouchableOpacity>
           </View>
@@ -928,10 +957,10 @@ const renderResultadoItem = ({ item }) => (
         <TouchableOpacity 
           style={[
             styles.resultActionBtn,
-            item.registroCompleto && styles.resultCompletedBtn
+            (item.registroCompleto || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.resultCompletedBtn
           ]} 
           onPress={() => handleEditarRegistroRes(item)}
-          disabled={item.registroCompleto}
+          disabled={item.registroCompleto || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
         >
           <Text style={styles.resultActionBtnText}>
             {item.registroCompleto ? "Completado" : "Agregar"}

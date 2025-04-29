@@ -3,13 +3,16 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity,Alert} from 'react-
 import {Picker} from '@react-native-picker/picker';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import api from '../../services/api'; 
+import DatePicker from 'react-native-date-picker'
+import { ScrollView } from "react-native-gesture-handler";
 
 const Create = () => {
   const navigation = useNavigation();
+  
   const [competencia, setCompetencia] = useState({
     nombreCom: '',
-    fechaInicioCom: '',
-    fechaFinCom: '',
+    fechaInicioCom: new Date(),
+    fechaFinCom: new Date(),
     idGen: '',
     idJuez: '',
     idCat: '',
@@ -69,97 +72,118 @@ const Create = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>CREAR</Text>
-      <View style={styles.formContainer}>
-        <Text style={styles.formTitulo}>Competencia</Text>
-        <View style={styles.hr} />
-        <TextInput
-          style={styles.input}
-          placeholder="Nombre"
-          value={competencia.nombre}
-          onChangeText={(text) => setCompetencia({ ...competencia, nombreCom: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Fecha de Inicio"
-          value={competencia.fechaInicio}
-          onChangeText={(text) => setCompetencia({ ...competencia, fechaInicioCom: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Fecha de Fin"
-          value={competencia.fechaFin}
-          onChangeText={(text) => setCompetencia({ ...competencia, fechaFinCom: text })}
-        />
-        <Text style={styles.label}>Género:</Text>
-        <Picker
-          selectedValue={competencia.idGen}
-          onValueChange={(itemValue) => setCompetencia({ ...competencia, idGen: itemValue })}
-        >
-          <Picker.Item label="--Elija un Género--" value="" />
-          {generos.map((genero) => (
-            <Picker.Item key={genero.id} label={genero.nombre} value={genero.id} />
-          ))}
-        </Picker>
-        <Text style={styles.label}>Juez:</Text>
-        <Picker
-          selectedValue={competencia.idJuez}
-          onValueChange={(itemValue) => setCompetencia({ ...competencia, idJuez: itemValue })}
-        >
-          <Picker.Item label="--Elija un Juez--" value="" />
-          {jueces.map((juez) => (
-            <Picker.Item key={juez.id} label={juez.nombre} value={juez.id} />
-          ))}
-        </Picker>
-        <Text style={styles.label}>Categoría:</Text>
-        <Picker
-          selectedValue={competencia.idCat}
-          onValueChange={(itemValue) => setCompetencia({ ...competencia, idCat: itemValue })}
-        >
-          <Picker.Item label="--Elija una Categoría--" value="" />
-          {categorias.map((categoria) => (
-            <Picker.Item key={categoria.id} label={categoria.nombre} value={categoria.id} />
-          ))}
-        </Picker>
-        <Text style={styles.label}>Sede:</Text>
-        <Picker
-          selectedValue={competencia.idSede}
-          onValueChange={(itemValue) => setCompetencia({ ...competencia, idSede: itemValue })}
-        >
-          <Picker.Item label="--Elija una Sede--" value="" />
-          {sedes.map((sede) => (
-            <Picker.Item key={sede.id} label={sede.nombre} value={sede.id} />
-          ))}
-        </Picker>
-        <Text style={styles.label}>Modalidad:</Text>
-        <Picker
-          selectedValue={competencia.idMod}
-          onValueChange={(itemValue) => setCompetencia({ ...competencia, idMod: itemValue })}
-        >
-          <Picker.Item label="--Elija una Modalidad--" value="" />
-          {modalidades.map((modalidad) => (
-            <Picker.Item key={modalidad.id} label={modalidad.nombre} value={modalidad.id} />
-          ))}
-        </Picker>
-        {/* <Text style={styles.label}>Estado:</Text>
-        <Picker
-          selectedValue={competencia.activoCom}
-          onValueChange={(itemValue) => setCompetencia({ ...competencia, activoCom: itemValue })}
-        >
-          <Picker.Item label="--Elija un Estado--" value="" />
-          {estados.map((estado) => (
-            <Picker.Item key={estado.id} label={estado.nombre} value={estado.id} />
-          ))}
-        </Picker> */}
-        <View style={styles.botonesContainer}>
-          <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
-            <Text style={styles.botonTexto}>Crear</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.botonRegresar} onPress={handleRegresar}>
-            <Text style={styles.botonTexto}>Regresar</Text>
-          </TouchableOpacity>
+      <ScrollView>
+        
+        <Text style={styles.titulo}>CREAR</Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.formTitulo}>Competencia</Text>
+          <View style={styles.hr} />
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre"
+            value={competencia.nombre}
+            onChangeText={(text) => setCompetencia({ ...competencia, nombreCom: text })}
+          />
+          {/* <TextInput
+            style={styles.input}
+            placeholder="Fecha de Inicio"
+            value={competencia.fechaInicio}
+            onChangeText={(text) => setCompetencia({ ...competencia, fechaInicioCom: text })}
+          /> */}
+          {/* <Input
+        
+            label="Fecha de Inicio"
+            placeholder="YYYY-MM-DD"
+            leftIcon={{ type: 'material', name: 'event' }}
+            value={competencia.fechaInicio}
+          /> */}
+          <Text style={styles.label}>Fecha de Inicio:</Text>
+          <DatePicker mode="date" date={competencia.fechaInicioCom} onDateChange={(date) => setCompetencia({ ...competencia, fechaInicioCom: date })} />
+          <Text style={styles.label}>Fecha de FIn:</Text>
+          <DatePicker mode="date" date={competencia.fechaFinCom} onDateChange={(date) => setCompetencia({ ...competencia, fechaFinCom: date })} />
+          {/* <Input
+        
+            label="Fecha de Fin"
+            placeholder="YYYY-MM-DD"
+            leftIcon={{ type: 'material', name: 'event' }}
+            value={competencia.fechaFin}
+          /> */}
+          {/* <TextInput
+            style={styles.input}
+            placeholder="Fecha de Fin"
+            value={competencia.fechaFin}
+            onChangeText={(text) => setCompetencia({ ...competencia, fechaFinCom: text })}
+          /> */}
+          <Text style={styles.label}>Género:</Text>
+          <Picker
+            selectedValue={competencia.idGen}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idGen: itemValue })}
+          >
+            <Picker.Item label="--Elija un Género--" value="" />
+            {generos.map((genero) => (
+              <Picker.Item key={genero.id} label={genero.nombre} value={genero.id} />
+            ))}
+          </Picker>
+          <Text style={styles.label}>Juez:</Text>
+          <Picker
+            selectedValue={competencia.idJuez}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idJuez: itemValue })}
+          >
+            <Picker.Item label="--Elija un Juez--" value="" />
+            {jueces.map((juez) => (
+              <Picker.Item key={juez.id} label={juez.nombre} value={juez.id} />
+            ))}
+          </Picker>
+          <Text style={styles.label}>Categoría:</Text>
+          <Picker
+            selectedValue={competencia.idCat}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idCat: itemValue })}
+          >
+            <Picker.Item label="--Elija una Categoría--" value="" />
+            {categorias.map((categoria) => (
+              <Picker.Item key={categoria.id} label={categoria.nombre} value={categoria.id} />
+            ))}
+          </Picker>
+          <Text style={styles.label}>Sede:</Text>
+          <Picker
+            selectedValue={competencia.idSede}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idSede: itemValue })}
+          >
+            <Picker.Item label="--Elija una Sede--" value="" />
+            {sedes.map((sede) => (
+              <Picker.Item key={sede.id} label={sede.nombre} value={sede.id} />
+            ))}
+          </Picker>
+          <Text style={styles.label}>Modalidad:</Text>
+          <Picker
+            selectedValue={competencia.idMod}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idMod: itemValue })}
+          >
+            <Picker.Item label="--Elija una Modalidad--" value="" />
+            {modalidades.map((modalidad) => (
+              <Picker.Item key={modalidad.id} label={modalidad.nombre} value={modalidad.id} />
+            ))}
+          </Picker>
+          {/* <Text style={styles.label}>Estado:</Text>
+          <Picker
+            selectedValue={competencia.activoCom}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, activoCom: itemValue })}
+          >
+            <Picker.Item label="--Elija un Estado--" value="" />
+            {estados.map((estado) => (
+              <Picker.Item key={estado.id} label={estado.nombre} value={estado.id} />
+            ))}
+          </Picker> */}
+          <View style={styles.botonesContainer}>
+            <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
+              <Text style={styles.botonTexto}>Crear</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.botonRegresar} onPress={handleRegresar}>
+              <Text style={styles.botonTexto}>Regresar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };

@@ -15,8 +15,11 @@ import {
 } from "@react-navigation/native";
 
 import api from "../../services/api";
+import useAppStorageHook from './../../storage/appStorage';
 
 const DCCompetenciaVias = () => {
+  const {appUser,unsetAppUser,setAppUser} = useAppStorageHook();
+  
   const route = useRoute();
   const { idCom, depAdded } = route.params; // Accede a los parámetros de la ruta
 
@@ -436,7 +439,8 @@ numPresasR2Final */}
                 !(!competencia.numPresasR1ClasifVias==null
                   || competencia.numPresasR2ClasifVias<=0
                   || competencia.numPresasR1ClasifVias<=0
-                   || !competencia.numPresasR2ClasifVias==null) && styles.inactiveTab,
+                  || !competencia.numPresasR2ClasifVias==null) && styles.inactiveTab 
+                  || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez"),
               ]}
               onPress={()=>handleGuardarNumpresas(
                 {
@@ -445,7 +449,7 @@ numPresasR2Final */}
                 }
               )
               }
-              disabled={!isTerminarClasifEnabled}
+              disabled={!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Guardar # Presas</Text>
             </TouchableOpacity>
@@ -470,10 +474,10 @@ numPresasR2Final */}
             <TouchableOpacity
               style={[
                 styles.addButton,
-                !isTerminarClasifEnabled && styles.inactiveTab,
+                (!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.inactiveTab,
               ]}
               onPress={handleTerminarFaseClasif}
-              disabled={!isTerminarClasifEnabled}
+              disabled={!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Terminar Fase</Text>
             </TouchableOpacity>
@@ -526,7 +530,8 @@ numPresasR2Final */}
                 !(!competencia.numPresasR1FinalVias==null
                   || competencia.numPresasR2FinalVias<=0
                   || competencia.numPresasR1FinalVias<=0
-                   || !competencia.numPresasR2FinalVias==null) && styles.inactiveTab,
+                  || !competencia.numPresasR2FinalVias==null) && styles.inactiveTab
+                  || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez"),
               ]}
               onPress={()=>handleGuardarNumpresas(
                 {
@@ -535,7 +540,7 @@ numPresasR2Final */}
                 }
               )
               }
-              disabled={!isTerminarFinalEnabled}
+              disabled={!isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Guardar # Presas</Text>
             </TouchableOpacity>
@@ -559,10 +564,10 @@ numPresasR2Final */}
             <TouchableOpacity
               style={[
                 styles.addButton,
-                !isTerminarFinalEnabled && styles.inactiveTab,
+                (!isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.inactiveTab,
               ]}
               onPress={handleTerminarFinal}
-              disabled={!isTerminarFinalEnabled}
+              disabled={!isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Terminar Fase</Text>
             </TouchableOpacity>
@@ -619,7 +624,7 @@ numPresasR2Final */}
               <TouchableOpacity
                 style={[
                   styles.actionButton,
-                  item.registroCompleto &&
+                  (item.registroCompleto || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) &&
                     styles.disabledButton
                 ]}
                 onPress={() => handleEditarRegistroRes(item)}
@@ -641,6 +646,7 @@ numPresasR2Final */}
                       competencia.numPresasR2FinalVias == null
                     ) && item.etapa == 2
                   )
+                  || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")
                 }
               >
                 <Text style={styles.actionButtonText}>

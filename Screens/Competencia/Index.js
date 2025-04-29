@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, FlatList, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'; 
 import api from '../../services/api';
 
 const IndexCompetencia = () => {
@@ -10,22 +10,51 @@ const IndexCompetencia = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const fetchCompetencias = async () => {
-      try {
-        const response = await api.get('/api/Competencia'); // Cambia según tu API
-        console.log('Respuesta de la API:', response.data); // Imprime la respuesta
-        setCompetencias(response.data);        
-      } catch (err) {
-        console.error(err);
-        setError('Error al cargar las competencias');
-      } finally {
-        setLoading(false);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
 
-    fetchCompetencias();
-  }, []);
+      const fetchCompetencias = async () => {
+        try {
+          setLoading(true);
+          const response = await api.get('/api/Competencia');
+          if (isActive) {
+            console.log('Respuesta de la API:', response.data);
+            setCompetencias(response.data);
+          }
+        } catch (err) {
+          console.error(err);
+          if (isActive) setError('Error al cargar las competencias');
+        } finally {
+          if (isActive) setLoading(false);
+        }
+      };
+
+      fetchCompetencias();
+
+      return () => {
+        isActive = false; // Limpieza para evitar actualización de estado si el componente se desmonta
+      };
+    }, [])
+  );
+
+
+  // useEffect(() => {
+  //   const fetchCompetencias = async () => {
+  //     try {
+  //       const response = await api.get('/api/Competencia'); // Cambia según tu API
+  //       console.log('Respuesta de la API:', response.data); // Imprime la respuesta
+  //       setCompetencias(response.data);        
+  //     } catch (err) {
+  //       console.error(err);
+  //       setError('Error al cargar las competencias');
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchCompetencias();
+  // }, []);
 
   const handleSearch = () => {
     const filtered = competencias.filter(competencia =>

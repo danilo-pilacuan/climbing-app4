@@ -14,9 +14,12 @@ import {
 } from "@react-navigation/native";
 
 import api from "../../services/api";
+import useAppStorageHook from './../../storage/appStorage';
 
 const DCCompetenciaBloque = () => {
   const route = useRoute();
+  const {appUser,unsetAppUser,setAppUser} = useAppStorageHook();
+  
   const { idCom, depAdded } = route.params; // Accede a los parámetros de la ruta
 
   const navigation = useNavigation();
@@ -345,10 +348,10 @@ const DCCompetenciaBloque = () => {
             <TouchableOpacity
               style={[
                 styles.addButton,
-                !isTerminarClasifEnabled && styles.inactiveTab,
+                (!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.inactiveTab,
               ]}
               onPress={handleTerminarFaseClasif}
-              disabled={!isTerminarClasifEnabled}
+              disabled={!isTerminarClasifEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Terminar Fase</Text>
             </TouchableOpacity>
@@ -375,10 +378,10 @@ const DCCompetenciaBloque = () => {
             <TouchableOpacity
               style={[
                 styles.addButton,
-                !isTerminarFinalEnabled && styles.inactiveTab,
+                (!isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.inactiveTab,
               ]}
               onPress={handleTerminarFinal}
-              disabled={!isTerminarFinalEnabled}
+              disabled={!isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Terminar Fase</Text>
             </TouchableOpacity>
@@ -471,11 +474,15 @@ const DCCompetenciaBloque = () => {
     
               <TouchableOpacity
                  style={[
-                   styles.buttonResult
+                   styles.buttonResult,
+                   !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez") && styles.inactiveTab,
                  ]}
                  onPress={() => handleEditarRegistroRes(item)}
+                 disabled={!(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
                >
-                 <Text style={[styles.buttonResultText]}>Agregar</Text>
+                 <Text style={[styles.buttonResultText
+                  
+                 ]}>Agregar</Text>
                </TouchableOpacity>
               </View>
             </View>
@@ -578,8 +585,8 @@ const DCCompetenciaBloque = () => {
             !isFinalesActive && styles.inactiveTab,
             isFinalesActive && selectedTab !== "finales" && styles.activeTab,
           ]}
-          onPress={() => setSelectedTab("finales")}
           disabled={!isFinalesActive}
+          onPress={() => setSelectedTab("finales")}
         >
           <Text
             style={[

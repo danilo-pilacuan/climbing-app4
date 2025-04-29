@@ -86,6 +86,33 @@ const handleQuitarDeportista = (deportista) => {
 };
 
 const handleFinishSelection = async () => {
+
+  if (deportistasAgregados.length === 0) {
+    Alert.alert('Error', 'No se han agregado deportistas a la competencia');
+    return
+  }
+
+  if (competencia.idMod==1 && deportistasAgregados.length <5) {
+    Alert.alert('Error', 'Para la competencia de velocidad se requieren al menos 5 deportistas');
+    return
+  }
+
+  if (competencia.idMod==2 && deportistasAgregados.length <7) {
+    Alert.alert('Error', 'Para la competencia de velocidad se requieren al menos 6 deportistas');
+    return
+  }
+
+  if (competencia.idMod==3 && deportistasAgregados.length <9) {
+    Alert.alert('Error', 'Para la competencia de velocidad se requieren al menos 8 deportistas');
+    return
+  }
+
+  if (competencia.idMod==4 && deportistasAgregados.length !=8) {
+    Alert.alert('Error', 'Para la competencia de velocidad se requieren exactamente 8 deportistas');
+    return
+  }
+
+
   const apiData = deportistasAgregados.map(d => ({ idDep: d.idDep,idCom: idCom }));
   console.log("apiData???????: ", apiData);
 
