@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity,Alert} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import api from '../../services/api'; 
 import DatePicker from 'react-native-date-picker'
 import { ScrollView } from "react-native-gesture-handler";
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+
 
 const Create = () => {
   const navigation = useNavigation();
+
+  
+
   
   const [competencia, setCompetencia] = useState({
     nombreCom: '',
@@ -24,24 +29,32 @@ const Create = () => {
     { id: 1, nombre: 'Masculino' },
     { id: 2, nombre: 'Femenino' },
   ]);
-  const [jueces, setJueces] = useState([
-    { id: 1, nombre: 'Juez 1' },
-    { id: 2, nombre: 'Juez 2' },
-  ]);
-  const [categorias, setCategorias] = useState([
-    { id: 1, nombre: 'Categoría A' },
-    { id: 2, nombre: 'Categoría B' },
-  ]);
-  const [sedes, setSedes] = useState([
-    { id: 1, nombre: 'Sede 1' },
-    { id: 2, nombre: 'Sede 2' },
-  ]);
-  const [modalidades, setModalidades] = useState([
+  const [jueces, setJueces] = useState(
+  //   [
+  //   { id: 1, nombre: 'Juez 1' },
+  //   { id: 2, nombre: 'Juez 2' },
+  // ]
+);
+  const [categorias, setCategorias] = useState(
+  //   [
+  //   { id: 1, nombre: 'Categoría A' },
+  //   { id: 2, nombre: 'Categoría B' },
+  // ]
+);
+  const [sedes, setSedes] = useState(
+  //   [
+  //   { id: 1, nombre: 'Sede 1' },
+  //   { id: 2, nombre: 'Sede 2' },
+  // ]
+);
+  const [modalidades, setModalidades] = useState(
+    [
     { id: 1, nombre: 'Velocidad' },
     { id: 2, nombre: 'Bloque' },
     { id: 3, nombre: 'Vias' },
     { id: 4, nombre: 'Combinada' },
-  ]);
+  ]
+);
   const [estados, setEstados] = useState([
     { id: 1, nombre: 'Activo' },
     { id: 2, nombre: 'Inactivo' },
@@ -69,6 +82,54 @@ const Create = () => {
   const handleRegresar = () => {
     navigation.goBack(); // Regresar a la pantalla anterior
   };
+
+  const getSedes = async () => {
+      try {
+        const response = await api.get(`/api/Sede`);
+        console.log("Respuesta de la API:", response.data);
+        //setCompetencia(response.data);
+        setSedes(response.data);
+      } catch (err) {
+        console.error(err);
+        Alert.alert("Error", "No se pudo obtener la competencia msg2");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    const getJueces = async () => {
+    try {
+      const response = await api.get(`/api/Juez`);
+      console.log("Respuesta de la API:", response.data);
+      //setCompetencia(response.data);
+      setJueces(response.data);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "No se pudo obtener la competencia msg2");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCategorias = async () => {
+    try {
+      const response = await api.get(`/api/Categorium`);
+      console.log("Respuesta de la API:", response.data);
+      //setCompetencia(response.data);
+      setCategorias(response.data);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "No se pudo obtener la competencia msg2");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+        getSedes();
+        getJueces();
+        getCategorias();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -131,17 +192,17 @@ const Create = () => {
           >
             <Picker.Item label="--Elija un Juez--" value="" />
             {jueces.map((juez) => (
-              <Picker.Item key={juez.id} label={juez.nombre} value={juez.id} />
+              <Picker.Item key={juez.idJuez} label={juez.nombresJuez+" "+juez.apellidosJuez} value={juez.idJuez} />
             ))}
           </Picker>
-          <Text style={styles.label}>Categoría:</Text>
+           <Text style={styles.label}>Categoría:</Text>
           <Picker
             selectedValue={competencia.idCat}
             onValueChange={(itemValue) => setCompetencia({ ...competencia, idCat: itemValue })}
           >
             <Picker.Item label="--Elija una Categoría--" value="" />
             {categorias.map((categoria) => (
-              <Picker.Item key={categoria.id} label={categoria.nombre} value={categoria.id} />
+              <Picker.Item key={categoria.idCat} label={categoria.nombreCat} value={categoria.idCat} />
             ))}
           </Picker>
           <Text style={styles.label}>Sede:</Text>
@@ -151,7 +212,7 @@ const Create = () => {
           >
             <Picker.Item label="--Elija una Sede--" value="" />
             {sedes.map((sede) => (
-              <Picker.Item key={sede.id} label={sede.nombre} value={sede.id} />
+              <Picker.Item key={sede.idSede} label={sede.nombreSede} value={sede.idSede} />
             ))}
           </Picker>
           <Text style={styles.label}>Modalidad:</Text>

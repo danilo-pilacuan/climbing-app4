@@ -15,7 +15,7 @@ import api from "../../services/api";
 const DCEditarRegistroResultado = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { idCom, idRegistroResultado,numPresasR1,numPresasR2 } = route.params;
+  const { idCom, idRegistroResultado, numPresasR1, numPresasR2 } = route.params;
   const [loading, setLoading] = useState(true);
 
   const [registroResultado, setRegistroResultado] = useState({});
@@ -100,6 +100,7 @@ const DCEditarRegistroResultado = () => {
         idRegistroResultado: registroResultado.idRegistroResultado,
         MaxEscala1: registroResultado.maxEscala1,
         MaxEscala2: registroResultado.maxEscala2,
+        Tiempo1: registroResultado.tiempo1, // Incluir el tiempo en el cuerpo de la petición
       };
 
       console.log("Body Update: 👽👽🐟🐟🐟", JSON.stringify(bodyUpdate));
@@ -131,6 +132,19 @@ const DCEditarRegistroResultado = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Editar Registro de Resultado Vias</Text>
+      
+      {/* Input para Tiempo */}
+      <View style={styles.timeContainer}>
+        <Text style={styles.label}>Tiempo (segundos):</Text>
+        <TextInput
+          style={styles.timeInput}
+          keyboardType="numeric"
+          value={registroResultado.tiempo1>10000?"0":( registroResultado.tiempo1?.toString() || "")}
+          onChangeText={(value) => handleInputChange("tiempo1", value)}
+          placeholder="Ingresa el tiempo"
+        />
+      </View>
+
       <View style={styles.tableContainer}>
         <View style={[styles.row, styles.headerRow]}>
           <Text style={styles.headerCell}></Text>
@@ -190,7 +204,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   loadingText: {
     textAlign: "center",
@@ -208,6 +222,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "#ccc",
+  },
+  timeContainer: {
+    marginBottom: 15,
+  },
+  timeInput: {
+    backgroundColor: "#fff",
+    padding: 12,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    fontSize: 16,
   },
   saveButton: {
     marginTop: 20,
@@ -264,6 +289,15 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     margin: 5,
+  },
+  switchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+  switchLabel: {
+    marginRight: 5,
+    fontSize: 12,
   },
 });
 

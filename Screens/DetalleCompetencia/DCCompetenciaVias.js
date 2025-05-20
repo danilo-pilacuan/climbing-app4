@@ -616,7 +616,7 @@ numPresasR2Final */}
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Resultados:</Text>
                   <Text style={styles.infoValue}>
-                    {item.labelMaxEscala1} ({item.rankingVia1}) - {item.labelMaxEscala2} ({item.rankingVia2})
+                    {item.labelMaxEscala1} ({item.rankingVia1}) - {item.labelMaxEscala2} ({item.rankingVia2}) - ({item.tiempo1}seg)
                   </Text>
                 </View>
               </View>

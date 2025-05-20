@@ -11,12 +11,29 @@ const DCAgregarDeportistas = () => {
   const [competencia, setCompetencia] = useState();
   const [deportistasDisponibles, setDeportistasDisponibles] = useState();
   const [deportistasAgregados, setDeportistasAgregados] = useState([]);
+  const [todosDeportistas, setTodosDeportistas] = useState([]); // Lista completa original
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(''); //FIXME: Implementar busqueda de deportista
 
-
+ const getDeportistasDisponibles= async (id) => {
+      try {
+        const response = await api.get('/api/Deportista');
+        console.log('Respuesta de la API deppp:', response.data);
+        console.log('Params: ', route.params);
+        console.log('idCom: ', idCom);
+        setTodosDeportistas(response.data); // Guarda la lista completa
+        setDeportistasDisponibles(response.data);
+        console.log('Deportistas Disponibles******:', deportistasDisponibles);
+      } catch (err) {
+        console.error(err);
+        Alert.alert('Error', 'No se pudo obtener la competencia');
+      }
+      finally{
+        setLoading(false);
+      }
+    }
 
   useEffect(() => {
     // const fetchcompetencia = async () => {
@@ -46,22 +63,7 @@ const DCAgregarDeportistas = () => {
       
     }
     
-    const getDeportistasDisponibles= async (id) => {
-      try {
-        const response = await api.get('/api/Deportista');
-        console.log('Respuesta de la API deppp:', response.data);
-        console.log('Params: ', route.params);
-        console.log('idCom: ', idCom);
-        setDeportistasDisponibles(response.data);
-        console.log('Deportistas Disponibles******:', deportistasDisponibles);
-      } catch (err) {
-        console.error(err);
-        Alert.alert('Error', 'No se pudo obtener la competencia');
-      }
-      finally{
-        setLoading(false);
-      }
-    }
+   
     
     getCompetencia(idCom);
     getDeportistasDisponibles();
@@ -85,6 +87,33 @@ const handleQuitarDeportista = (deportista) => {
     setDeportistasDisponibles((prev) => [...prev, deportista]);
 };
 
+ const handleSearch = (text) => {
+    setSearchQuery(text); // Actualiza el estado de searchQuery
+    
+    if (!text.trim()) {
+      setDeportistasDisponibles(todosDeportistas);   // Si el campo está vacío, recarga todos los deportistas
+      return;
+    }
+    
+    // Filtrar deportistas según la búsqueda
+    const filtered = todosDeportistas.filter(deportista => {
+      const nombres = deportista.nombresDep ? deportista.nombresDep.toLowerCase() : '';
+      const apellidos = deportista.apellidosDep ? deportista.apellidosDep.toLowerCase() : '';
+      const cedula = deportista.cedulaDep ? deportista.cedulaDep.toLowerCase() : '';
+
+      return (
+        nombres.includes(text.toLowerCase()) ||
+        apellidos.includes(text.toLowerCase()) ||
+        cedula.includes(text)
+      );
+    });
+
+    console.log('Resultados filtrados:', filtered); // Imprime los resultados filtrados
+
+    setDeportistasDisponibles(filtered); // Actualiza el estado con los resultados filtrados
+    
+  };
+
 const handleFinishSelection = async () => {
 
   if (deportistasAgregados.length === 0) {
@@ -92,23 +121,23 @@ const handleFinishSelection = async () => {
     return
   }
 
-  if (competencia.idMod==1 && deportistasAgregados.length <5) {
-    Alert.alert('Error', 'Para la competencia de velocidad se requieren al menos 5 deportistas');
+  if (competencia.idMod==1 && deportistasAgregados.length <4) {
+    Alert.alert('Error', 'Para la competencia de velocidad se requieren al menos 4 deportistas');
     return
   }
 
-  if (competencia.idMod==2 && deportistasAgregados.length <7) {
-    Alert.alert('Error', 'Para la competencia de velocidad se requieren al menos 6 deportistas');
+  if (competencia.idMod==2 && deportistasAgregados.length <4) {
+    Alert.alert('Error', 'Para la competencia de bloque se requieren al menos 4 deportistas');
     return
   }
 
-  if (competencia.idMod==3 && deportistasAgregados.length <9) {
-    Alert.alert('Error', 'Para la competencia de velocidad se requieren al menos 8 deportistas');
+  if (competencia.idMod==3 && deportistasAgregados.length <4) {
+    Alert.alert('Error', 'Para la competencia de vias se requieren al menos 4 deportistas');
     return
   }
 
   if (competencia.idMod==4 && deportistasAgregados.length !=8) {
-    Alert.alert('Error', 'Para la competencia de velocidad se requieren exactamente 8 deportistas');
+    Alert.alert('Error', 'Para la competencia de combinada se requieren exactamente 8 deportistas');
     return
   }
 
@@ -196,7 +225,12 @@ const handleFinishSelection = async () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Agregar Deportista</Text>
-
+<TextInput
+        value={searchQuery}
+        onChangeText={handleSearch} // Llama a handleSearch al cambiar el texto
+        placeholder="Buscar ..."
+        style={styles.searchInput}
+      />
     <View style={styles.containerDeportistas}>
     <Text style={styles.label}>Deportistas Disponibles:</Text>
     {
@@ -330,10 +364,10 @@ const styles = StyleSheet.create({
        fontWeight:'bold' ,
    },
     containerDeportistas:{
-        height: "44%",
+        height: "40%",
     },
     containerDeportistasAdd:{
-        height: "44%",
+        height: "40%",
     },
     depDispItem:{
         flexDirection:'row',
@@ -354,6 +388,13 @@ const styles = StyleSheet.create({
     depBtn:{
         height: "70%",
     },
+    searchInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 5,
+  },
 });
 
 export default DCAgregarDeportistas;

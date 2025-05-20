@@ -1012,10 +1012,13 @@ const renderResultadoItem = ({ item }) => (
                       <Text style={styles.timeLabel}>Tiempo:</Text>
                       <Text style={[
                         styles.timeValue,
-                        item.registrosVS[0].fallRegistro1 && styles.fallValue
+                        item.registrosVS[0].fallRegistro1 && styles.fallValue,
+                        item.registrosVS[0].salidaFalse && styles.falseStartStyle,
                       ]}>
-                        {item.registrosVS[0].fallRegistro1 ? "FALL" : item.registrosVS[0].tiempo1}
+                        {item.registrosVS[0].salidaFalse ? "FLS" : (item.registrosVS[0].fallRegistro1?"FALL" : item.registrosVS[0].tiempo1)}
                       </Text>
+
+                      
                     </View>
                   )}
                 </View>
@@ -1065,12 +1068,17 @@ const renderResultadoItem = ({ item }) => (
                   {item.registrosVS[1].registroEditadoT1 && (
                     <View style={styles.timeRow}>
                       <Text style={styles.timeLabel}>Tiempo:</Text>
+
+                      
                       <Text style={[
                         styles.timeValue,
-                        item.registrosVS[1].fallRegistro1 && styles.fallValue
+                        item.registrosVS[1].fallRegistro1 && styles.fallValue,
+                        item.registrosVS[1].salidaFalse && styles.falseStartStyle,
                       ]}>
-                        {item.registrosVS[1].fallRegistro1 ? "FALL" : item.registrosVS[1].tiempo1}
+                        {item.registrosVS[1].salidaFalse ? "FLS" : (item.registrosVS[1].fallRegistro1?"FALL" : item.registrosVS[1].tiempo1)}
                       </Text>
+                      
+
                     </View>
                   )}
                 </View>
