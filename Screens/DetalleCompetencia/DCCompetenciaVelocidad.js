@@ -424,9 +424,24 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
         numSlices=4;
       }
 
+      let registrosResultadosFiltered = registrosResultados.filter((reg) => reg.salidaFalse==false);
+      
+      
+      
+
+      if(registrosResultadosFiltered.length<numSlices){
+        numSlices=Math.pow(2, Math.floor(Math.log2(registrosResultadosFiltered.length)));
+      }
+      
+      
+
+      console.log('registrosResultadosFiltered: 🤠🤠🤠🤠', registrosResultadosFiltered);
+      console.log('len registrosResultadosFiltered: 🎃🎃🎃🎃', registrosResultadosFiltered.length);
+      console.log('numSlices: ❌❌❌', numSlices);
+
       //Aqui se verifica si la competencia es de velocidad y se calcula octavos
       if(competencia.idMod==1){
-        const clasifOctavos = registrosResultados
+        const clasifOctavos = registrosResultadosFiltered
         .sort((a, b) => Math.min(a.tiempo1, a.tiempo2) - Math.min(b.tiempo1, b.tiempo2))
         .slice(0, numSlices)
         .map((item, index) => ({ ...item, orden: index + 1 }));
