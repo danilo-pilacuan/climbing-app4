@@ -30,22 +30,13 @@ const Create = () => {
     { id: 2, nombre: 'Femenino' },
   ]);
   const [jueces, setJueces] = useState(
-  //   [
-  //   { id: 1, nombre: 'Juez 1' },
-  //   { id: 2, nombre: 'Juez 2' },
-  // ]
+  []
 );
   const [categorias, setCategorias] = useState(
-  //   [
-  //   { id: 1, nombre: 'Categoría A' },
-  //   { id: 2, nombre: 'Categoría B' },
-  // ]
+  []
 );
   const [sedes, setSedes] = useState(
-  //   [
-  //   { id: 1, nombre: 'Sede 1' },
-  //   { id: 2, nombre: 'Sede 2' },
-  // ]
+  []
 );
   const [modalidades, setModalidades] = useState(
     [
@@ -224,7 +215,7 @@ const Create = () => {
             {modalidades.map((modalidad) => (
               <Picker.Item key={modalidad.id} label={modalidad.nombre} value={modalidad.id} />
             ))}
-          </Picker>
+          </Picker> 
           {/* <Text style={styles.label}>Estado:</Text>
           <Picker
             selectedValue={competencia.activoCom}
