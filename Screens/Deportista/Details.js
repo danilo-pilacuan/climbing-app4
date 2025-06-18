@@ -12,7 +12,32 @@ const Details = ({ route }) => {
   const [listaClubes, setListaClubes] = useState([]);
   const [listaEntrenadores, setListaEntrenadores] = useState([]);
   const [listaGeneros, setListaGeneros] = useState([]);
-  const [listaProvincias, setListaProvincias] = useState([]);
+  const [listaProvincias, setListaProvincias] = useState([
+  { idProv: '01', descProv: 'Azuay' },
+  { idProv: '02', descProv: 'Bolívar' },
+  { idProv: '03', descProv: 'Cañar' },
+  { idProv: '04', descProv: 'Carchi' },
+  { idProv: '05', descProv: 'Cotopaxi' },
+  { idProv: '06', descProv: 'Chimborazo' },
+  { idProv: '07', descProv: 'El Oro' },
+  { idProv: '08', descProv: 'Esmeraldas' },
+  { idProv: '09', descProv: 'Guayas' },
+  { idProv: '10', descProv: 'Imbabura' },
+  { idProv: '11', descProv: 'Loja' },
+  { idProv: '12', descProv: 'Los Ríos' },
+  { idProv: '13', descProv: 'Manabí' },
+  { idProv: '14', descProv: 'Morona Santiago' },
+  { idProv: '15', descProv: 'Napo' },
+  { idProv: '16', descProv: 'Pastaza' },
+  { idProv: '17', descProv: 'Pichincha' },
+  { idProv: '18', descProv: 'Tungurahua' },
+  { idProv: '19', descProv: 'Zamora Chinchipe' },
+  { idProv: '20', descProv: 'Galápagos' },
+  { idProv: '21', descProv: 'Sucumbíos' },
+  { idProv: '22', descProv: 'Orellana' },
+  { idProv: '23', descProv: 'Santo Domingo de los Tsáchilas' },
+  { idProv: '24', descProv: 'Santa Elena' },
+]);
   const [listaUsuarios, setListaUsuarios] = useState([]);
 
   // Efecto para cargar las listas
@@ -25,7 +50,7 @@ const Details = ({ route }) => {
   const loadOptions = async () => {
     try {
       // Cargar categorías
-      const categoriasResponse = await api.get('/api/Categoria');
+      const categoriasResponse = await api.get('/api/Categorium');
       console.log('Datos de categorías:', categoriasResponse.data);
       setListaCategorias(categoriasResponse.data);
 
@@ -45,9 +70,9 @@ const Details = ({ route }) => {
       setListaGeneros(generosResponse.data);
 
       // Cargar provincias
-      const provinciasResponse = await api.get('/api/Provincia');
-      console.log('Datos de provincias:', provinciasResponse.data);
-      setListaProvincias(provinciasResponse.data);
+      // const provinciasResponse = await api.get('/api/Provincia');
+      // console.log('Datos de provincias:', provinciasResponse.data);
+      // setListaProvincias(provinciasResponse.data);
 
       // Cargar usuarios (si aplica)
       const usuariosResponse = await api.get('/api/Usuario');

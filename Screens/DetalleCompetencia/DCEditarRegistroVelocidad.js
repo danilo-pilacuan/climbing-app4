@@ -6,17 +6,25 @@ import api from '../../services/api';
 const DCEditarRegistroResultado = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { idCom, idRegistroResultado } = route.params;
+  const { idCom, idRegistroResultado,idRegistroVS } = route.params;
   const [loading, setLoading] = useState(true);
 
   const [registroResultado, setRegistroResultado] = useState({});
+  const [registroResultadoVs, setRegistroResultadoVs] = useState({});
   const [tiempoOrig1, setTiempoOrig1] = useState(0);
   const [tiempoOrig2, setTiempoOrig2] = useState(0);
 
   const fetchRegistroResultado = async () => {
     try {
       const response = await api.get(`/api/RegistroResultado/${idRegistroResultado}`);
+      
       let data = response.data; // Trabajamos con la data de la respuesta directamente
+
+      if(idRegistroVS){
+        const responseVs = await api.get(`/api/RegistroResultado/${idRegistroVS}`);
+        setRegistroResultadoVs(responseVs.data);
+      }
+
       setTiempoOrig1(response.data.tiempo1); // Guardamos el valor original de tiempo1
       setTiempoOrig2(response.data.tiempo2); // Guardamos el valor original de tiempo1
 
@@ -91,6 +99,26 @@ const DCEditarRegistroResultado = () => {
   const handleDescalificar = async () => {
     try {
       console.log("🙈🙈🙈🙈🙈🙈🙈")
+
+      ////////////////////////////////////////
+      if(registroResultadoVs.idRegistroResultado){
+      let regVsGuardar = {...registroResultadoVs};
+
+      regVsGuardar.registroEditadoT2 = true;
+      regVsGuardar.registroEditadoT1 = true;
+      regVsGuardar.fallRegistro1 = false;
+      regVsGuardar.fallRegistro2 = false;
+      regVsGuardar.tiempo1=-1724;
+      regVsGuardar.tiempo2=-1724;
+      regVsGuardar.SalidaFalse=false;
+
+      regVsGuardar.registroCompleto=true;
+
+      await api.put(`/api/RegistroResultado/${idRegistroVS}`, regVsGuardar);
+      }
+
+      ////////////////////////////////////////
+      
 
       let regResGuardar = {...registroResultado};
 

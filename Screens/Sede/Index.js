@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { View, Text, TextInput, FlatList, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'; 
 import api from '../../services/api'; // Asegúrate de importar tu instancia de API
 
 const IndexSede = () => {
   const navigation = useNavigation(); // Inicializa useNavigation
   const [sedes, setSedes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isActiveState, setIsActiveState] = useState(true);
   const [error, setError] = useState(null);
   const [newSedeName, setNewSedeName] = useState('');
 
-  useEffect(() => {
-    const fetchSedes = async () => {
+  const fetchSedes = async () => {
       try {
         const response = await api.get('/api/Sede'); // Cambia según tu API
         console.log('Respuesta de la API:', response.data); // Imprime la respuesta
@@ -24,7 +24,25 @@ const IndexSede = () => {
       }
     };
 
-    fetchSedes();
+
+  useFocusEffect(
+      useCallback(() => {
+        let isActive = true;
+        setIsActiveState(isActive);
+        
+  
+        fetchSedes();
+  
+        return () => {
+          isActive = false; // Limpieza para evitar actualización de estado si el componente se desmonta
+          setIsActiveState(isActive);
+        };
+      }, [])
+    );
+
+  useEffect(() => {
+    
+    
   }, []);
 
   const handleCreateSede = async () => {
@@ -50,10 +68,10 @@ const IndexSede = () => {
     }
   };
 
-  const handleDetailsSede = async (id) => {
+  const handleDetailsSede = async (sede) => {
     try {
-      const response = await api.get(`/api/Sede/${id}`);
-      navigation.navigate('DetallesSede', { sede: response.data });
+      console.log('🤠🤠🤠Detalles de la sede:', sede); // Verifica que se esté pasando el objeto correcto
+      navigation.navigate('SedeDetails', { sede: sede });
     } catch (err) {
       console.error(err);
       Alert.alert('Error', 'No se pudo obtener los detalles de la sede');
@@ -93,7 +111,7 @@ const IndexSede = () => {
         <TouchableOpacity style={styles.button} onPress={() => handleEditSede(item.idSede)}>
           <Text style={styles.buttonText}>Editar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => handleDetailsSede(item.idSede)}>
+        <TouchableOpacity style={styles.button} onPress={() => handleDetailsSede(item)}>
           <Text style={styles.buttonText}>Detalles</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleDeleteSede(item.idSede)}>

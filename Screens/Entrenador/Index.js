@@ -1,15 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import api from '../../services/api'; // Asegúrate de que esta ruta sea correcta
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'; 
 
 const IndexEntrenador = ({ navigation }) => {
   const [entrenadores, setEntrenadores] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdminOrEntrenador, setIsAdminOrEntrenador] = useState(false);
+  const [isActiveState, setIsActiveState] = useState(true);
+  
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+      setIsActiveState(isActive);
+      
+
+      loadEntrenadores(); // Llamar a la API para obtener datos
+      checkUserRole(); // Simulando User.IsInRole
+
+      return () => {
+        isActive = false; // Limpieza para evitar actualización de estado si el componente se desmonta
+        setIsActiveState(isActive);
+      };
+    }, [])
+  );
 
   useEffect(() => {
-    loadEntrenadores(); // Llamar a la API para obtener datos
-    checkUserRole(); // Simulando User.IsInRole
+    
   }, []);
 
   const loadEntrenadores = async () => {
@@ -78,24 +95,25 @@ const IndexEntrenador = ({ navigation }) => {
   const handleDelete = (id) => {
     // Muestra una alerta de confirmación
     Alert.alert(
-      'Confirmar Eliminación',
-      '¿Estás seguro de que deseas eliminar este Entrenador?',
+      'Deshabilitar Entrenador',
+      '¿Estás seguro de que deseas deshabilitar este Entrenador?',
       [
         {
           text: 'Cancelar',
-          onPress: () => console.log('Eliminación cancelada'),
+          onPress: () => console.log('Cancelado'),
           style: 'cancel',
         },
         {
           text: 'Eliminar',
           onPress: async () => {
             try {
-              await api.delete(`/api/Entrenador/${id}`);
-              setEntrenadores(entrenadores.filter(j => j.idEntrenador !== id));
-              Alert.alert('Éxito', 'Entrenador eliminado con éxito');
+              console.log(`/api/Entrenador/deshabilitar/${id}`);
+              await api.put(`/api/Entrenador/deshabilitar/${id}`,{});
+              loadEntrenadores();
+              Alert.alert('Éxito', 'Entrenador deshabilitado con éxito');
             } catch (err) {
               console.error(err);
-              Alert.alert('Error', 'No se pudo eliminar el Entrenador');
+              Alert.alert('Error', 'No se pudo deshabilitar el Entrenador');
             }
           },
         },

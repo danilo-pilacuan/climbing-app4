@@ -67,12 +67,13 @@ const IndexCompetencia = () => {
     navigation.navigate('CompetenciaCreate'); // Navega a la pantalla de creación
   };
 
-  const handleEditCompetencia = (id) => {
-    navigation.navigate('EditarCompetencia', { idCom: id }); // Navega a la pantalla de edición
+  const handleEditCompetencia = (item) => {
+    console.log('🎃🎃🎃🎃🦑🦑🦑',item)
+    navigation.navigate('CompetenciaEdit', { competencia: item }); // Navega a la pantalla de edición
   };
 
-  const handleDetailsCompetencia = (id) => {
-    navigation.navigate('DetallesCompetencia', { idCom: id }); // Navega a la pantalla de detalles
+  const handleDetailsCompetencia = (item) => {
+    navigation.navigate('CompetenciaDetails', {competencia: item  }); // Navega a la pantalla de detalles
   };
 
   const handleDeleteCompetencia = async (id) => {
@@ -109,10 +110,10 @@ const IndexCompetencia = () => {
       
       {/* Botones para Editar y Eliminar */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => handleEditCompetencia(item.idCom)}>
+        <TouchableOpacity style={styles.button} onPress={() => handleEditCompetencia(item)}>
           <Text style={styles.buttonText}>Editar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => handleDetailsCompetencia(item.idCom)}>
+        <TouchableOpacity style={styles.button} onPress={() => handleDetailsCompetencia(item)}>
           <Text style={styles.buttonText}>Detalles</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={() => handleDeleteCompetencia(item.idCom)}>

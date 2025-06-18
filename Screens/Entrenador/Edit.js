@@ -10,43 +10,65 @@ const EditEntrenador = () => {
   const entrenador = route.params.entrenador; // Obtener el objeto entrenador pasado como parámetro
 
   // Inicializa el estado con los datos del entrenador
-  const [nombresEnt, setNombresEnt] = useState(entrenador.NombresEnt);
-  const [apellidosEnt, setApellidosEnt] = useState(entrenador.ApellidosEnt);
-  const [cedulaEnt, setCedulaEnt] = useState(entrenador.CedulaEnt);
-  const [idPro, setIdPro] = useState(entrenador.IdPro);
-  const [idUsu, setIdUsu] = useState(entrenador.IdUsu);
-  const [listaProvincias, setListaProvincias] = useState([]);
+  const [nombresEnt, setNombresEnt] = useState(entrenador.nombresEnt);
+  const [apellidosEnt, setApellidosEnt] = useState(entrenador.apellidosEnt);
+  const [cedulaEnt, setCedulaEnt] = useState(entrenador.cedulaEnt);
+  const [idPro, setIdPro] = useState(entrenador.idPro);
+  const [idUsu, setIdUsu] = useState(entrenador.idUsu);
+const [listaProvincias, setListaProvincias] = useState([
+  { idPro: '01', nombrePro: 'Azuay' },
+  { idPro: '02', nombrePro: 'Bolívar' },
+  { idPro: '03', nombrePro: 'Cañar' },
+  { idPro: '04', nombrePro: 'Carchi' },
+  { idPro: '05', nombrePro: 'Cotopaxi' },
+  { idPro: '06', nombrePro: 'Chimborazo' },
+  { idPro: '07', nombrePro: 'El Oro' },
+  { idPro: '08', nombrePro: 'Esmeraldas' },
+  { idPro: '09', nombrePro: 'Guayas' }, 
+  { idPro: '10', nombrePro: 'Imbabura' },
+  { idPro: '11', nombrePro: 'Loja' },
+  { idPro: '12', nombrePro: 'Los Ríos' },
+  { idPro: '13', nombrePro: 'Manabí' },
+  { idPro: '14', nombrePro: 'Morona Santiago' },
+  { idPro: '15', nombrePro: 'Napo' },
+  { idPro: '16', nombrePro: 'Pastaza' },
+  { idPro: '17', nombrePro: 'Pichincha' },
+  { idPro: '18', nombrePro: 'Tungurahua' },
+  { idPro: '19', nombrePro: 'Zamora Chinchipe' },
+  { idPro: '20', nombrePro: 'Galápagos' },
+  { idPro: '21', nombrePro: 'Sucumbíos' },
+  { idPro: '22', nombrePro: 'Orellana' },
+  { idPro: '23', nombrePro: 'Santo Domingo de los Tsáchilas' },
+  { idPro: '24', nombrePro: 'Santa Elena' },
+]);
 
   useEffect(() => {
-    loadOptions();
+    // Aquí podrías cargar las provincias desde la API si es necesario
+    // loadOptions(); // Descomentar si necesitas cargar provincias desde la API
+    console.log('Entrenador recibido:', entrenador); // Verifica que el objeto entrenador se recibe correctamente
   }, []);
 
-  const loadOptions = async () => {
-    try {
-      // Cargar provincias
-      const provinciasResponse = await api.get('/api/Provincia');
-      console.log('Datos de provincias:', provinciasResponse.data);
-      setListaProvincias(provinciasResponse.data);
-      
-    } catch (error) {
-      console.error('Error cargando opciones:', error.response ? error.response.data : error.message);
-      Alert.alert('Error', 'No se pudieron cargar las opciones');
-    }
-  };
 
   const guardarEntrenador = async () => {
     try {
-      const response = await api.put(`/api/Entrenador/${entrenador.id}`, { // Asegúrate de usar el ID correcto
-        NombresEnt: nombresEnt,
-        ApellidosEnt: apellidosEnt,
-        CedulaEnt: cedulaEnt,
-        IdPro: idPro,
-        IdUsu: idUsu,
-        ActivoEnt: entrenador.ActivoEnt, // Mantener el estado actual
+      console.log('Guardando entrenador:', {
+        nombresEnt: nombresEnt,
+        apellidosEnt: apellidosEnt,
+        cedulaEnt: cedulaEnt,
+        idPro: idPro,
+        //activoEnt: entrenador.ActivoEnt,
+      });
+      console.log(`/api/Entrenador/${entrenador.idEnt}`); // Verifica que el ID se está pasando correctamente
+      const response = await api.put(`/api/Entrenador/${entrenador.idEnt}`, { // Asegúrate de usar el ID correcto
+        nombresEnt: nombresEnt,
+        apellidosEnt: apellidosEnt,
+        cedulaEnt: cedulaEnt,
+        idPro: idPro,
+        //activoEnt: entrenador.ActivoEnt, // Mantener el estado actual
       });
       console.log('Entrenador actualizado:', response.data);
       Alert.alert('Éxito', 'Entrenador actualizado con éxito');
-      navigation.navigate('Index'); // Regresar a la lista de entrenadores
+      navigation.pop(); // Regresar a la lista de entrenadores
     } catch (error) {
       console.error('Error guardando entrenador:', error);
       Alert.alert('Error', 'No se pudo actualizar el entrenador');

@@ -203,13 +203,13 @@ const DCCompetenciaVias = () => {
   };
 
   const handleDesactivarCompetencia = async () => {
-    try {
-      return await api.put(
-        "/api/Competencia/desactivar/"+idCom.toString()
-      );
-    } catch (error) {
-      console.error("Error al desactivar la competencia: ", error);
-    }
+    // try {
+    //   return await api.put(
+    //     "/api/Competencia/desactivar/"+idCom.toString()
+    //   );
+    // } catch (error) {
+    //   console.error("Error al desactivar la competencia: ", error);
+    // }
   }
 
   const handleEditarRegistroRes = (registro) => {
@@ -333,6 +333,7 @@ const DCCompetenciaVias = () => {
       getCompetencia(idCom)
       .then((data) => {
         setCompetencia(data);
+        Alert.alert("Actualización correcta","Número de presas actualizado correctamente");
       })
       .catch((error) => {
         console.error(
@@ -505,7 +506,7 @@ numPresasR2Final */}
                     }
                   />
                 </View>
-                <View style={styles.rutasPresasColumn}>
+                {/* <View style={styles.rutasPresasColumn}>
                   <Text style={styles.label}>Presas Ruta 2</Text>
                   <TextInput
                     style={styles.inputCell}
@@ -521,35 +522,34 @@ numPresasR2Final */}
                          || !competencia.numPresasR2FinalVias==null)
                     }
                   />
-                </View>
+                </View> */}
               </View>
               <View style={styles.rowPresasContainer}>
               <TouchableOpacity
               style={[
                 styles.guardarPresasButton,
                 !(!competencia.numPresasR1FinalVias==null
-                  || competencia.numPresasR2FinalVias<=0
-                  || competencia.numPresasR1FinalVias<=0
-                  || !competencia.numPresasR2FinalVias==null) && styles.inactiveTab
+                  || competencia.numPresasR1FinalVias<=0) && styles.inactiveTab
                   || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez"),
               ]}
               onPress={()=>handleGuardarNumpresas(
                 {
                   "numPresasR1FinalVias":Number(numPresasR1Final),
-                  "numPresasR2FinalVias":Number(numPresasR2Final)
+                  //"numPresasR2FinalVias":Number(numPresasR2Final)
                 }
               )
               }
-              disabled={!isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
+              disabled={ !(!competencia.numPresasR1FinalVias==null
+                  || competencia.numPresasR1FinalVias<=0) || !isTerminarFinalEnabled || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
             >
               <Text style={styles.addButtonText}>Guardar # Presas</Text>
             </TouchableOpacity>
               </View>
             </View>
-            <Text style={styles.label}>
+            {/* <Text style={styles.label}>
               Etapa Final: {regsResFinal.filter((r) => r.etapaCompleta).length}/
               {regsResFinal.length}
-            </Text>
+            </Text> */}
 
             <View style={styles.resultadosListContainer}>
               {regsResFinal.length > 0 && (
@@ -616,7 +616,8 @@ numPresasR2Final */}
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Resultados:</Text>
                   <Text style={styles.infoValue}>
-                    {item.labelMaxEscala1} ({item.rankingVia1}) - {item.labelMaxEscala2} ({item.rankingVia2}) - ({item.tiempo1}seg)
+                    {item.labelMaxEscala1} ({item.rankingVia1}) ({item.tiempo1>1000?"0":item.tiempo1}seg) 
+                     {item.etapa==1&&<> - {item.labelMaxEscala2} ({item.rankingVia2}) ({item.tiempo2>1000?"0":item.tiempo2}seg)</>}
                   </Text>
                 </View>
               </View>
@@ -624,12 +625,14 @@ numPresasR2Final */}
               <TouchableOpacity
                 style={[
                   styles.actionButton,
-                  (item.registroCompleto || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) &&
+                  (
+                    //item.registroCompleto || 
+                    !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) &&
                     styles.disabledButton
                 ]}
                 onPress={() => handleEditarRegistroRes(item)}
                 disabled={
-                  item.registroCompleto ||
+                  //item.registroCompleto ||
                   (
                     (
                       competencia.numPresasR1ClasifVias == null ||
@@ -641,16 +644,17 @@ numPresasR2Final */}
                   (
                     (
                       competencia.numPresasR1FinalVias == null ||
-                      competencia.numPresasR2FinalVias <= 0 ||
-                      competencia.numPresasR1FinalVias <= 0 ||
-                      competencia.numPresasR2FinalVias == null
+                      competencia.numPresasR1FinalVias <= 0 
                     ) && item.etapa == 2
                   )
                   || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")
                 }
               >
-                <Text style={styles.actionButtonText}>
+                {/* <Text style={styles.actionButtonText}>
                   {item.registroCompleto ? "Completado" : "Agregar"}
+                </Text> */}
+                <Text style={styles.actionButtonText}>
+                  Agregar
                 </Text>
               </TouchableOpacity>
             </View>

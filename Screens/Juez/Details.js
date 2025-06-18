@@ -28,9 +28,9 @@ const Details = ({ route }) => {
         <Text style={styles.label}>¿Es Juez Principal?</Text>
         <Text style={styles.value}>{juez.principalJuez ? 'Sí' : 'No'}</Text>
         <Text style={styles.label}>Provincia</Text>
-        <Text style={styles.value}>{juez.idProNavigation?.nombrePro || 'No disponible'}</Text> {/* Manejo seguro */}
+        <Text style={styles.value}>{juez.provincia?.nombrePro || 'No disponible'}</Text> 
         <Text style={styles.label}>Usuario</Text>
-        <Text style={styles.value}>{juez.idUsuNavigation?.nombreUsu || 'No disponible'}</Text> {/* Manejo seguro */}
+        <Text style={styles.value}>{juez.usuario?.nombreUsu || 'No disponible'}</Text> 
         <Text style={styles.label}>Estado</Text>
         <Text style={styles.value}>{juez.activoJuez ? 'Activo' : 'Inactivo'}</Text>
       </View>

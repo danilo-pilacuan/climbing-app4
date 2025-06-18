@@ -11,35 +11,39 @@ const IndexDetalleCompetencia = () => {
   const navigation = useNavigation(); // Inicializa useNavigation
   const [competencias, setCompetencias] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isActiveState, setIsActiveState] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   const {appUser,unsetAppUser,setAppUser} = useAppStorageHook();
 
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
-
-      const fetchCompetencias = async () => {
+  const fetchCompetencias = async () => {
         try {
           setLoading(true);
-          const response = await api.get('/api/Competencia');
-          if (isActive) {
+          const response = await api.get('/api/Competencia/activas');
+          if (isActiveState) {
             console.log('Respuesta de la API:', response.data);
             setCompetencias(response.data);
           }
         } catch (err) {
           console.error(err);
-          if (isActive) setError('Error al cargar las competencias');
+          if (isActiveState) setError('Error al cargar las competencias');
         } finally {
-          if (isActive) setLoading(false);
+          if (isActiveState) setLoading(false);
         }
       };
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+      setIsActiveState(isActive);
+      
 
       fetchCompetencias();
 
       return () => {
         isActive = false; // Limpieza para evitar actualización de estado si el componente se desmonta
+        setIsActiveState(isActive);
       };
     }, [])
   );
@@ -109,17 +113,32 @@ const IndexDetalleCompetencia = () => {
     navigation.navigate('DetallesCompetencia', { idCom: id }); // Navega a la pantalla de detalles
   };
 
-  const handleDeshabilitarCompetencia = async (id) => {
-    try {
-      await api.delete(`/api/Competencia/${id}`);
-      setCompetencias(competencias.filter(competencia => competencia.IdCom !== id));
-      Alert.alert('Éxito', 'Competencia eliminada con éxito');
-    } catch (err) {
-      console.error(err);
-      Alert.alert('Error', 'No se pudo eliminar la competencia');
-    }
-  };
-
+  const handleDeshabilitarCompetencia = (id) => {
+  Alert.alert(
+    'Confirmar',
+    '¿Estás seguro de que deseas deshabilitar esta competencia?, No se podrá volver a habilitar.',
+    [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          try {
+            await api.get(`/api/Competencia/desactivar/${id}`);
+            Alert.alert('Éxito', 'Competencia deshabilitada con éxito');
+            fetchCompetencias(); // Refresca la lista de competencias
+          } catch (err) {
+            console.error(err);
+            Alert.alert('Error', 'No se pudo deshabilitar la competencia');
+          }
+        },
+      },
+    ],
+    { cancelable: false } // El usuario debe presionar uno de los botones
+  );
+};
   if (loading) {
     return <Text style={styles.loadingText}>Cargando...</Text>;
   }

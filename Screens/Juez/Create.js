@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker'; // Importa Picker desde el nuevo paquete
 import api from '../../services/api'; // Asegúrate de importar tu instancia de API
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const CreateEntrenador = () => {
-  const [nombresEnt, setNombresEnt] = useState('');
-  const [apellidosEnt, setApellidosEnt] = useState('');
-  const [cedulaEnt, setCedulaEnt] = useState('');
+const CreateJuez = () => {
+  const [nombresJuez, setNombresJuez] = useState('');
+  const [apellidosJuez, setApellidosJuez] = useState('');
+  const [cedulaJuez, setCedulaJuez] = useState('');
   const [idPro, setIdPro] = useState('');
   const [listaProvincias, setListaProvincias] = useState([]);
-  const [estadoEnt, setEstadoEnt] = useState(true); // Por defecto habilitado (true)
+  const [estadoJuez, setEstadoJuez] = useState(true); // Por defecto habilitado (true)
+  const navigation = useNavigation();
 
   useEffect(() => {
     loadOptions();
@@ -28,58 +30,60 @@ const CreateEntrenador = () => {
     }
   };
 
-  const createEntrenador = async () => {
-    if (!nombresEnt || !apellidosEnt || !cedulaEnt || !idPro) {
+  const createJuez = async () => {
+    if (!nombresJuez || !apellidosJuez || !cedulaJuez || !idPro) {
       Alert.alert('Error', 'Por favor completa todos los campos.');
       return;
     }
 
     try {
-      const response = await api.post('/api/Entrenador', {
-        NombresEnt: nombresEnt,
-        ApellidosEnt: apellidosEnt,
-        CedulaEnt: cedulaEnt,
-        IdPro: idPro,
-        ActivoEnt: estadoEnt, // Se pasa como booleano
+      const response = await api.post('/api/Juez', {
+        nombresJuez: nombresJuez,
+        apellidosJuez: apellidosJuez,
+        cedulaJuez: cedulaJuez,
+        principalJuez: true, // Asumiendo que siempre es principal
+        idPro: idPro,
+        activoJuez: estadoJuez, // Se pasa como booleano
       });
-      console.log('Entrenador creado:', response.data);
-      Alert.alert('Éxito', 'Entrenador creado con éxito');
+      console.log('Juez creado:', response.data);
+      Alert.alert('Éxito', 'Juez creado con éxito');
       // Limpiar el formulario después de crear
-      setNombresEnt('');
-      setApellidosEnt('');
-      setCedulaEnt('');
-      setIdPro('');
-      setEstadoEnt(true); // Reiniciar a habilitado por defecto
+      // setNombresJuez('');
+      // setApellidosJuez('');
+      // setCedulaJuez('');
+      // setIdPro('');
+      // setEstadoJuez(true); // Reiniciar a habilitado por defecto
+      navigation.pop(); 
     } catch (error) {
-      console.error('Error creando entrenador:', error);
-      Alert.alert('Error', 'No se pudo crear el entrenador');
+      console.error('Error creando juez:', error);
+      Alert.alert('Error', 'No se pudo crear el juez');
     }
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>CREAR ENTRENADOR</Text>
+      <Text style={styles.title}>CREAR JUEZ</Text>
       <View style={styles.formContainer}>
         <Text style={styles.label}>Nombres:</Text>
         <TextInput
           style={styles.input}
-          value={nombresEnt}
-          onChangeText={setNombresEnt}
-          placeholder="Ingrese los nombres del entrenador"
+          value={nombresJuez}
+          onChangeText={setNombresJuez}
+          placeholder="Ingrese los nombres del juez"
         />
         <Text style={styles.label}>Apellidos:</Text>
         <TextInput
           style={styles.input}
-          value={apellidosEnt}
-          onChangeText={setApellidosEnt}
-          placeholder="Ingrese los apellidos del entrenador"
+          value={apellidosJuez}
+          onChangeText={setApellidosJuez}
+          placeholder="Ingrese los apellidos del juez"
         />
         <Text style={styles.label}>Cédula:</Text>
         <TextInput
           style={styles.input}
-          value={cedulaEnt}
-          onChangeText={setCedulaEnt}
-          placeholder="Ingrese la cédula del entrenador"
+          value={cedulaJuez}
+          onChangeText={setCedulaJuez}
+          placeholder="Ingrese la cédula del juez"
           keyboardType="numeric"
         />
         <Text style={styles.label}>Provincia:</Text>
@@ -97,9 +101,9 @@ const CreateEntrenador = () => {
         {/* Selección de Estado */}
         <Text style={styles.label}>Estado:</Text>
         <Picker
-          selectedValue={estadoEnt ? '1' : '0'} // Mapeo del booleano a string para el Picker
+          selectedValue={estadoJuez ? '1' : '0'} // Mapeo del booleano a string para el Picker
           style={styles.picker}
-          onValueChange={(itemValue) => setEstadoEnt(itemValue === '1')}
+          onValueChange={(itemValue) => setEstadoJuez(itemValue === '1')}
         >
           <Picker.Item label="Habilitado" value="1" />
           <Picker.Item label="Deshabilitado" value="0" />
@@ -107,7 +111,7 @@ const CreateEntrenador = () => {
 
         {/* Botones para guardar y regresar */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={createEntrenador} style={[styles.button, styles.createButton]}>
+          <TouchableOpacity onPress={createJuez} style={[styles.button, styles.createButton]}>
             <Text style={styles.buttonText}>Crear</Text>
           </TouchableOpacity>
 
@@ -177,5 +181,5 @@ const styles = StyleSheet.create({
    }
 });
 
-export default CreateEntrenador;
+export default CreateJuez;
 

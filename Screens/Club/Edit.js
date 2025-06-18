@@ -23,7 +23,7 @@ const EditClub = () => {
       });
       console.log('Club actualizado:', response.data);
       Alert.alert('Éxito', 'Club actualizado con éxito');
-      navigation.navigate('Index'); // Regresar a la lista de clubes
+      navigation.pop(); // Regresar a la lista de clubes
     } catch (error) {
       console.error('Error guardando club:', error);
       Alert.alert('Error', 'No se pudo actualizar el club');

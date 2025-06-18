@@ -698,8 +698,8 @@ const noCompletadosFinal = vsFinal.filter((res) => res.etapaCompleta==false);
     setIsTerminarFinalEnabled(false)
   }
 
-  const handleEditarRegistroRes = (registro) => {
-    navigation.navigate('DCEditarRegistroVelocidad', { idCom:idCom, idRegistroResultado: registro.idRegistroResultado });
+  const handleEditarRegistroRes = (registro,registroVS) => {
+    navigation.navigate('DCEditarRegistroVelocidad', { idCom:idCom, idRegistroResultado: registro.idRegistroResultado,idRegistroVS:registroVS?registroVS.idRegistroResultado: null });
   }
 
   useFocusEffect(
@@ -974,7 +974,7 @@ const renderResultadoItem = ({ item }) => (
             styles.resultActionBtn,
             (item.registroCompleto || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")) && styles.resultCompletedBtn
           ]} 
-          onPress={() => handleEditarRegistroRes(item)}
+          onPress={() => handleEditarRegistroRes(item,null)}
           disabled={item.registroCompleto || !(appUser.rolesUsu == "Administrador" || appUser.rolesUsu == "Juez")}
         >
           <Text style={styles.resultActionBtnText}>
@@ -1030,7 +1030,15 @@ const renderResultadoItem = ({ item }) => (
                         item.registrosVS[0].fallRegistro1 && styles.fallValue,
                         item.registrosVS[0].salidaFalse && styles.falseStartStyle,
                       ]}>
-                        {item.registrosVS[0].salidaFalse ? "FLS" : (item.registrosVS[0].fallRegistro1?"FALL" : item.registrosVS[0].tiempo1)}
+                        {
+  item.registrosVS[0].salidaFalse
+    ? "FLS"
+    : item.registrosVS[0].fallRegistro1
+      ? "FALL"
+      : item.registrosVS[0].tiempo1 === -1724
+        ? "Ganador"
+        : item.registrosVS[0].tiempo1
+}
                       </Text>
 
                       
@@ -1043,7 +1051,7 @@ const renderResultadoItem = ({ item }) => (
                     styles.actionButton, 
                     item.registrosVS[0].registroCompleto && styles.disabledButton
                   ]} 
-                  onPress={() => handleEditarRegistroRes(item.registrosVS[0])}
+                  onPress={() => handleEditarRegistroRes(item.registrosVS[0],item.registrosVS[1])}
                   disabled={item.registrosVS[0].registroCompleto}
                 >
                   <Text style={styles.actionButtonText}>
@@ -1090,7 +1098,15 @@ const renderResultadoItem = ({ item }) => (
                         item.registrosVS[1].fallRegistro1 && styles.fallValue,
                         item.registrosVS[1].salidaFalse && styles.falseStartStyle,
                       ]}>
-                        {item.registrosVS[1].salidaFalse ? "FLS" : (item.registrosVS[1].fallRegistro1?"FALL" : item.registrosVS[1].tiempo1)}
+                        {
+  item.registrosVS[1].salidaFalse
+    ? "FLS"
+    : item.registrosVS[1].fallRegistro1
+      ? "FALL"
+      : item.registrosVS[1].tiempo1 === -1724
+        ? "Ganador"
+        : item.registrosVS[1].tiempo1
+}
                       </Text>
                       
 
@@ -1103,7 +1119,7 @@ const renderResultadoItem = ({ item }) => (
                     styles.actionButton, 
                     item.registrosVS[1].registroCompleto && styles.disabledButton
                   ]} 
-                  onPress={() => handleEditarRegistroRes(item.registrosVS[1])}
+                  onPress={() => handleEditarRegistroRes(item.registrosVS[1],item.registrosVS[0])}
                   disabled={item.registrosVS[1].registroCompleto}
                 >
                   <Text style={styles.actionButtonText}>

@@ -20,7 +20,7 @@ const Create = () => {
     fechaFinCom: new Date(),
     idGen: '',
     idJuez: '',
-    idCat: '',
+    idCatNavigationIdCat: '',
     idSede: '',
     idMod: '',
     activoCom: true,
@@ -153,20 +153,8 @@ const Create = () => {
           <DatePicker mode="date" date={competencia.fechaInicioCom} onDateChange={(date) => setCompetencia({ ...competencia, fechaInicioCom: date })} />
           <Text style={styles.label}>Fecha de FIn:</Text>
           <DatePicker mode="date" date={competencia.fechaFinCom} onDateChange={(date) => setCompetencia({ ...competencia, fechaFinCom: date })} />
-          {/* <Input
-        
-            label="Fecha de Fin"
-            placeholder="YYYY-MM-DD"
-            leftIcon={{ type: 'material', name: 'event' }}
-            value={competencia.fechaFin}
-          /> */}
-          {/* <TextInput
-            style={styles.input}
-            placeholder="Fecha de Fin"
-            value={competencia.fechaFin}
-            onChangeText={(text) => setCompetencia({ ...competencia, fechaFinCom: text })}
-          /> */}
-          <Text style={styles.label}>Género:</Text>
+
+          {/* <Text style={styles.label}>Género:</Text>
           <Picker
             selectedValue={competencia.idGen}
             onValueChange={(itemValue) => setCompetencia({ ...competencia, idGen: itemValue })}
@@ -175,7 +163,7 @@ const Create = () => {
             {generos.map((genero) => (
               <Picker.Item key={genero.id} label={genero.nombre} value={genero.id} />
             ))}
-          </Picker>
+          </Picker> */}
           <Text style={styles.label}>Juez:</Text>
           <Picker
             selectedValue={competencia.idJuez}
@@ -188,8 +176,8 @@ const Create = () => {
           </Picker>
            <Text style={styles.label}>Categoría:</Text>
           <Picker
-            selectedValue={competencia.idCat}
-            onValueChange={(itemValue) => setCompetencia({ ...competencia, idCat: itemValue })}
+            selectedValue={competencia.idCatNavigationIdCat}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idCatNavigationIdCat: itemValue })}
           >
             <Picker.Item label="--Elija una Categoría--" value="" />
             {categorias.map((categoria) => (

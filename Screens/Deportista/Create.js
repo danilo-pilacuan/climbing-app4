@@ -70,7 +70,7 @@ const CreateDeportista = () => {
         NombresDep: nombresDep,
         ApellidosDep: apellidosDep,
         CedulaDep: cedulaDep,
-        IdPro: idPro,
+        IdProvincia: idPro,
         IdCat: idCat,
         IdGen: idGen,
         IdClub: idClub,

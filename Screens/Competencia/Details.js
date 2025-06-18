@@ -1,113 +1,205 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState,useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity,Alert} from 'react-native';
+import {Picker} from '@react-native-picker/picker';
+import { useNavigation, useRoute } from '@react-navigation/native'; // Importa useNavigation y useRoute
+import api from '../../services/api'; 
+import DatePicker from 'react-native-date-picker'
+import { ScrollView } from "react-native-gesture-handler";
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
-const Details = ({ route, navigation }) => {
-  const { competencia } = route.params; // Asumiendo que pasas el modelo como parámetro de navegación
-  const listadoCategorias = []; // Asumir que estos datos se obtienen desde una API o fuente de datos
-  const listadoGeneros = [];
-  const listadoJueces = [];
-  const listadoModalidades = [];
-  const listadoSedes = [];
-  const detalleCompetencia = competencia.Details; // Asumiendo que este es un arreglo dentro del modelo
 
-  const getCategoriaNombre = (idCat) => {
-    const categoria = listadoCategorias.find((categoria) => categoria.IdCat === idCat);
-    return categoria ? categoria.NombreCat : 'No encontrado';
+const Details = () => {
+  const navigation = useNavigation(); // Inicializa la navegación
+  const route = useRoute(); // Obtiene los parámetros de la ruta
+  const competenciaParam = route.params.competencia; // Obtener el objeto club pasado como parámetro
+  
+
+  
+  const [competencia, setCompetencia] = useState({
+    idCom: competenciaParam.idCom, // Inicializa con el ID de la competencia
+    nombreCom: competenciaParam.nombreCom, // Inicializa con el nombre de la competencia
+    fechaInicioCom: new Date(competenciaParam.fechaInicioCom) || new Date(), // Inicializa con la fecha de inicio de la competencia
+    fechaFinCom: new Date(competenciaParam.fechaFinCom) || new Date(),
+    idGen: competenciaParam.idGen,
+    idJuez: competenciaParam.idJuez,
+    idCatNavigationIdCat: competenciaParam.idCatNavigationIdCat,
+    idSede: competenciaParam.idSede,
+    idMod: competenciaParam.idMod,
+    activoCom: competenciaParam.activoCom,
+  });
+  const [generos, setGeneros] = useState([
+    { id: 1, nombre: 'Masculino' },
+    { id: 2, nombre: 'Femenino' },
+  ]);
+  const [jueces, setJueces] = useState(
+  []
+);
+  const [categorias, setCategorias] = useState(
+  []
+);
+  const [sedes, setSedes] = useState(
+  []
+);
+  const [modalidades, setModalidades] = useState(
+    [
+    { id: 1, nombre: 'Velocidad' },
+    { id: 2, nombre: 'Bloque' },
+    { id: 3, nombre: 'Vias' },
+    { id: 4, nombre: 'Combinada' },
+  ]
+);
+  const [estados, setEstados] = useState([
+    { id: 1, nombre: 'Activo' },
+    { id: 2, nombre: 'Inactivo' },
+  ]);
+
+  const handleEditar = () => {
+    // Lógica para crear la competencia (p. ej., API call)
+    console.log('Detalles competencia:', competencia);
+    // Navegar a otra pantalla después de crear (opcional)
+    // navigation.navigate('Competencias');
+
+    api.put('/api/Competencia/'+competencia.idCom, competencia)
+      .then((response) => {
+        console.log('Competencia creada:', response.data);
+        Alert.alert("Competencias", "Competencia creada con éxito");
+        navigation.goBack(); // Regresar a la pantalla anterior
+      })
+      .catch((error) => {
+        console.error('Error al crear competencia:', error);
+        Alert.alert('Error', 'No se pudo crear la competencia');
+      });
+
   };
 
-  const getGeneroNombre = (idGen) => {
-    const genero = listadoGeneros.find((genero) => genero.IdGen === idGen);
-    return genero ? genero.NombreGen : 'No encontrado';
+  const handleRegresar = () => {
+    navigation.goBack(); // Regresar a la pantalla anterior
   };
 
-  const getJuezNombre = (idJuez) => {
-    const juez = listadoJueces.find((juez) => juez.IdJuez === idJuez);
-    return juez ? `${juez.NombresJuez} ${juez.ApellidosJuez}` : 'No encontrado';
+  const getSedes = async () => {
+      try {
+        const response = await api.get(`/api/Sede`);
+        console.log("Respuesta de la API:", response.data);
+        //setCompetencia(response.data);
+        setSedes(response.data);
+      } catch (err) {
+        console.error(err);
+        Alert.alert("Error", "No se pudo obtener la competencia msg2");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    const getJueces = async () => {
+    try {
+      const response = await api.get(`/api/Juez`);
+      console.log("Respuesta de la API:", response.data);
+      //setCompetencia(response.data);
+      setJueces(response.data);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "No se pudo obtener la competencia msg2");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getModalidadNombre = (idMod) => {
-    const modalidad = listadoModalidades.find((modalidad) => modalidad.IdMod === idMod);
-    return modalidad ? modalidad.DescripcionMod : 'No encontrado';
+  const getCategorias = async () => {
+    try {
+      const response = await api.get(`/api/Categorium`);
+      console.log("Respuesta de la API:", response.data);
+      //setCompetencia(response.data);
+      setCategorias(response.data);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "No se pudo obtener la competencia msg2");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getSedeNombre = (idSede) => {
-    const sede = listadoSedes.find((sede) => sede.IdSede === idSede);
-    return sede ? sede.NombreSede : 'No encontrado';
-  };
-
-  const getEstado = (activo) => (activo ? 'ACTIVO' : 'INACTIVO');
+  useEffect(() => {
+      console.log("🤢🤢🤢Competencia a editar:", competencia);
+        getSedes();
+        getJueces();
+        getCategorias();
+  }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.titulo}>DETALLES</Text>
-      <View style={styles.detalleContainer}>
-        <Text style={styles.label}>Nombre</Text>
-        <Text style={styles.valor}>{competencia.NombreCom}</Text>
+    <View style={styles.container}>
+      <ScrollView>
+        
+        <Text style={styles.titulo}>DETALLES</Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.formTitulo}>Competencia</Text>
+          <View style={styles.hr} />
+          <Text style={styles.formTitulo}>{competencia.nombreCom}</Text>
+          <Text style={styles.label}>Fecha de Inicio:</Text>
+          <Text style={styles.formTitulo}>{competencia.fechaInicioCom.toDateString()}</Text>
+          <Text style={styles.label}>Fecha de Fin:</Text>
+          <Text style={styles.formTitulo}>{competencia.fechaFinCom.toDateString()}</Text>
+          <Text style={styles.label}>Juez:</Text>
+          <Picker
+            selectedValue={competencia.idJuez}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idJuez: itemValue })}
+            enabled={false} 
+          >
+            <Picker.Item label="--Elija un Juez--" value="" />
+            {jueces.map((juez) => (
+              <Picker.Item key={juez.idJuez} label={juez.nombresJuez+" "+juez.apellidosJuez} value={juez.idJuez}  />
+            ))}
+          </Picker>
+           <Text style={styles.label}>Categoría:</Text>
+          <Picker
+            selectedValue={competencia.idCatNavigationIdCat}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idCatNavigationIdCat: itemValue })}
+            enabled={false} 
+          >
+            <Picker.Item label="--Elija una Categoría--" value="" />
+            {categorias.map((categoria) => (
+              <Picker.Item key={categoria.idCat} label={categoria.nombreCat} value={categoria.idCat} />
+            ))}
+          </Picker>
+          <Text style={styles.label}>Sede:</Text>
+          <Picker
+            selectedValue={competencia.idSede}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idSede: itemValue })}
+            enabled={false} 
+          >
+            <Picker.Item label="--Elija una Sede--" value="" />
+            {sedes.map((sede) => (
+              <Picker.Item key={sede.idSede} label={sede.nombreSede} value={sede.idSede} />
+            ))}
+          </Picker>
+          <Text style={styles.label}>Modalidad:</Text>
+          <Picker
+            selectedValue={competencia.idMod}
+            onValueChange={(itemValue) => setCompetencia({ ...competencia, idMod: itemValue })}
+            enabled={false} 
+          >
+            <Picker.Item label="--Elija una Modalidad--" value="" />
+            {modalidades.map((modalidad) => (
+              <Picker.Item key={modalidad.id} label={modalidad.nombre} value={modalidad.id} />
+            ))}
+          </Picker> 
 
-        <Text style={styles.label}>Fecha de Inicio</Text>
-        <Text style={styles.valor}>{competencia.FechaInicioCom}</Text>
-
-        <Text style={styles.label}>Fecha de Fin</Text>
-        <Text style={styles.valor}>{competencia.FechaFinCom}</Text>
-
-        <Text style={styles.label}>Categoría</Text>
-        <Text style={styles.valor}>{getCategoriaNombre(competencia.IdCat)}</Text>
-
-        <Text style={styles.label}>Género</Text>
-        <Text style={styles.valor}>{getGeneroNombre(competencia.IdGen)}</Text>
-
-        <Text style={styles.label}>Juez</Text>
-        <Text style={styles.valor}>{getJuezNombre(competencia.IdJuez)}</Text>
-
-        <Text style={styles.label}>Modalidad</Text>
-        <Text style={styles.valor}>{getModalidadNombre(competencia.IdMod)}</Text>
-
-        <Text style={styles.label}>Sede</Text>
-        <Text style={styles.valor}>{getSedeNombre(competencia.IdSede)}</Text>
-
-        <Text style={styles.label}>Estado</Text>
-        <Text style={styles.valor}>{getEstado(competencia.ActivoCom)}</Text>
-      </View>
-
-      <Text style={styles.subtitulo}>Detalle de Competencia</Text>
-      <View style={styles.tablaContainer}>
-        <View style={styles.tablaHeader}>
-          <Text style={styles.tablaHeaderItem}>Puesto</Text>
-          <Text style={styles.tablaHeaderItem}>Resultado de Clasificación</Text>
-          <Text style={styles.tablaHeaderItem}>Resultado Final</Text>
-          <Text style={styles.tablaHeaderItem}>Competencia</Text>
-          <Text style={styles.tablaHeaderItem}>Deportista</Text>
-        </View>
-        {detalleCompetencia.map((item, index) => (
-          <View key={index} style={styles.tablaRow}>
-            <Text style={styles.tablaItem}>{item.Puesto}</Text>
-            <Text style={styles.tablaItem}>{item.ClasRes}</Text>
-            <Text style={styles.tablaItem}>{item.FinalRes}</Text>
-            <Text style={styles.tablaItem}>{competencia.NombreCom}</Text>
-            <Text style={styles.tablaItem}>
-              {item.IdDepNavigation.NombresDep} {item.IdDepNavigation.ApellidosDep}
-            </Text>
+          <View style={styles.botonesContainer}>
+            
+            <TouchableOpacity style={styles.botonRegresar} onPress={handleRegresar}>
+              <Text style={styles.botonTexto}>Regresar</Text>
+            </TouchableOpacity>
           </View>
-        ))}
-      </View>
-
-      <View style={styles.botonesContainer}>
-        <TouchableOpacity style={styles.botonEditar} onPress={() => navigation.navigate('EditarCompetencia', { id: competencia.IdCom })}>
-          <Text style={styles.textoBoton}>Editar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.botonRegresar} onPress={() => navigation.goBack()}>
-          <Text style={styles.textoBoton}>Regresar</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   titulo: {
@@ -115,63 +207,51 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  subtitulo: {
+  formContainer: {
+    width: '100%',
+  },
+  formTitulo: {
     fontSize: 18,
-    color: '#666',
     marginBottom: 10,
   },
-  detalleContainer: {
-    marginBottom: 20,
+  hr: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#ccc',
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  valor: {
-    fontSize: 16,
-    marginBottom: 15,
-  },
-  tablaContainer: {
-    marginBottom: 20,
-  },
-  tablaHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#f0f0f0',
-    padding: 5,
-  },
-  tablaHeaderItem: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  tablaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 5,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  tablaItem: {
-    fontSize: 16,
   },
   botonesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
   },
   botonEditar: {
-    backgroundColor: '#ffc107',
-    padding: 10,
+    backgroundColor: '#007bff',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 5,
   },
   botonRegresar: {
     backgroundColor: '#dc3545',
-    padding: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 5,
   },
-  textoBoton: {
-    fontSize: 16,
+  botonTexto: {
     color: '#fff',
+    fontSize: 16,
   },
 });
 

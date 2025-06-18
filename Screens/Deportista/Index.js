@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'; 
+
 import Create from './Create';
 import EditarDeportista from './Edit';
 import DetailsDeportista from './Details';
@@ -11,83 +13,105 @@ const Index = ({ navigation }) => {
   const [deportistas, setDeportistas] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdminOrEntrenador, setIsAdminOrEntrenador] = useState(false);
+  const [isActiveState, setIsActiveState] = useState(true);
 
-  useEffect(() => {
-    // Llamar a la API para obtener datos
-    loadDeportistas();
-    checkUserRole(); // Simulando User.IsInRole
-  }, []);
+  useFocusEffect(
+      useCallback(() => {
+        
+
+        let isActive = true;
+        setIsActiveState(isActive);
+        
+  
+        loadDeportistas();
+        checkUserRole(); // Simulando User.IsInRole
+  
+        return () => {
+          isActive = false; // Limpieza para evitar actualización de estado si el componente se desmonta
+          setIsActiveState(isActive);
+        };
+      }, [])
+    );
+
+
 
   const loadDeportistas = async () => {
     try {
       const response = await api.get('/api/Deportista'); // Llamada a la API para obtener deportistas
-      const deportistasConDetalles = await Promise.all(response.data.map(async (deportista) => {
-        // Obtener detalles asociados a cada deportista usando sus ids
-        const categoria = await loadCategoria(deportista.idCat);
-        const club = await loadClub(deportista.idClub);
-        const entrenador = await loadEntrenador(deportista.idEnt);
-        const genero = await loadGenero(deportista.idGen);
-        const provincia = await loadProvincia(deportista.idPro);
+      // const deportistasConDetalles = await Promise.all(response.data.map(async (deportista) => {
+      //   // Obtener detalles asociados a cada deportista usando sus ids
+      //   const categoria = await loadCategoria(deportista.idCat);
+      //   const club = await loadClub(deportista.idClub);
+      //   const entrenador = await loadEntrenador(deportista.idEnt);
+      //   const genero = await loadGenero(deportista.idGen);
+      //   const provincia = await loadProvincia(deportista.idPro);
 
-        return {
-          ...deportista,
-          idCatNavigation: categoria,
-          idClubNavigation: club,
-          idEntNavigation: entrenador,
-          idGenNavigation: genero,
-          idProNavigation: provincia
-        };
-      }));
-      setDeportistas(deportistasConDetalles);
+        
+
+      //   return {
+      //     ...deportista,
+      //     idCatNavigation: categoria,
+      //     idClubNavigation: club,
+      //     idEntNavigation: entrenador,
+      //     idGenNavigation: genero,
+      //     idProNavigation: provincia
+      //   };
+      // }));
+
+      console.log('👽👽👽👽 Respuesta de la API:', response.data); // Imprime la respuesta de la API
+
+      //const deportistasActivos = response.data.filter(deportista => deportista.activoDep === true);
+      const deportistasActivos = response.data;
+setDeportistas(deportistasActivos);
     } catch (error) {
       console.error('Error cargando deportistas:', error);
     }
   };
 
-  const loadCategoria = async (idCat) => {
-    try {
-      const response = await api.get(`/api/Categoria/${idCat}`);
-      return response.data ? { idCat: response.data.idCat, nombreCat: response.data.nombreCat } : { idCat: null, nombreCat: 'Sin categoría' };
-    } catch (error) {
-      return { idCat: null, nombreCat: 'Sin categoría' };
-    }
-  };
+  // const loadCategoria = async (idCat) => {
+  //   try {
+  //     const response = await api.get(`/api/Categoria/${idCat}`);
+  //     return response.data ? { idCat: response.data.idCat, nombreCat: response.data.nombreCat } : { idCat: null, nombreCat: 'Sin categoría' };
+  //   } catch (error) {
+  //     return { idCat: null, nombreCat: 'Sin categoría' };
+  //   }
+  // };
 
-  const loadClub = async (idClub) => {
-    try {
-      const response = await api.get(`/api/Club/${idClub}`);
-      return response.data ? { idClub: response.data.idClub, nombreClub: response.data.nombreClub } : { idClub: null, nombreClub: 'Sin club' };
-    } catch (error) {
-      return { idClub: null, nombreClub: 'Sin club' };
-    }
-  };
+  // const loadClub = async (idClub) => {
+  //   try {
+  //     const response = await api.get(`/api/Club/${idClub}`);
+  //     return response.data ? { idClub: response.data.idClub, nombreClub: response.data.nombreClub } : { idClub: null, nombreClub: 'Sin club' };
+  //   } catch (error) {
+  //     return { idClub: null, nombreClub: 'Sin club' };
+  //   }
+  // };
 
-  const loadEntrenador = async (idEnt) => {
-    try {
-      const response = await api.get(`/api/Entrenador/${idEnt}`);
-      return response.data ? { idEnt: response.data.idEnt, nombreEnt: `${response.data.nombresEnt} ${response.data.apellidosEnt}` } : { idEnt: null, nombreEnt: 'Sin entrenador' };
-    } catch (error) {
-      return { idEnt: null, nombreEnt: 'Sin entrenador' };
-    }
-  };
+  // const loadEntrenador = async (idEnt) => {
+  //   try {
+  //     const response = await api.get(`/api/Entrenador/${idEnt}`);
+  //     return response.data ? { idEnt: response.data.idEnt, nombreEnt: `${response.data.nombresEnt} ${response.data.apellidosEnt}` } : { idEnt: null, nombreEnt: 'Sin entrenador' };
+  //   } catch (error) {
+  //     return { idEnt: null, nombreEnt: 'Sin entrenador' };
+  //   }
+  // };
 
-  const loadGenero = async (idGen) => {
-    try {
-      const response = await api.get(`/api/Genero/${idGen}`);
-      return response.data ? { idGen: response.data.idGen, nombreGen: response.data.nombreGen } : { idGen: null, nombreGen: 'Sin género' };
-    } catch (error) {
-      return { idGen: null, nombreGen: 'Sin género' };
-    }
-  };
+  // const loadGenero = async (idGen) => {
+  //   try {
+  //     const response = await api.get(`/api/Genero/${idGen}`);
+  //     return response.data ? { idGen: response.data.idGen, nombreGen: response.data.nombreGen } : { idGen: null, nombreGen: 'Sin género' };
+  //   } catch (error) {
+  //     return { idGen: null, nombreGen: 'Sin género' };
+  //   }
+  // };
 
-  const loadProvincia = async (idPro) => {
-    try {
-      const response = await api.get(`/api/Provincia/${idPro}`);
-      return response.data ? { idPro: response.data.idPro, nombrePro: response.data.nombrePro } : { idPro: null, nombrePro: 'Sin provincia' };
-    } catch (error) {
-      return { idPro: null, nombrePro: 'Sin provincia' };
-    }
-  };
+  // const loadProvincia = async (idPro) => {
+  //   try {
+  //     const response = await api.get(`/api/Provincia/${idPro}`);
+  //     return response.data ? { idPro: response.data.idPro, nombrePro: response.data.nombrePro } : { idPro: null, nombrePro: 'Sin provincia' };
+  //   } catch (error) {
+  //     return { idPro: null, nombrePro: 'Sin provincia' };
+  //   }
+  // };
 
   const checkUserRole = () => {
     // Simulando la verificación de rol
@@ -149,14 +173,16 @@ const Index = ({ navigation }) => {
 
   const handleDisable = async (idDep) => {
     try {
+      console.log('❌❌❌Deshabilitando deportista con ID:', idDep); // Verifica el ID del deportista
       const deportista = deportistas.find(d => d.idDep === idDep);
+      console.log('✅✅✅Deportista encontrado:', deportista);
       if (!deportista) {
         console.error('Deportista no encontrado con ID:', idDep);
         return;
       }
 
       // Realiza la solicitud para deshabilitar al deportista
-      const response = await api.put(`/api/Deportista/${idDep}`, { activoDep: false });
+      const response = await api.put(`/api/Deportista/deshabilitar/${idDep}`, { activoDep: false });
       
       console.log('Deportista deshabilitado:', response.data); // Verifica la respuesta del servidor
 
@@ -166,6 +192,7 @@ const Index = ({ navigation }) => {
           d.idDep === idDep ? { ...d, activoDep: false } : d
         )
       );
+      Alert.alert('Éxito', 'Deportista deshabilitado con éxito');
     } catch (error) {
       console.error('Error al deshabilitar deportista:', error.response ? error.response.data : error.message);
     }
@@ -195,11 +222,11 @@ const Index = ({ navigation }) => {
             <Text style={styles.itemText}>Nombres: {item.nombresDep}</Text>
             <Text style={styles.itemText}>Apellidos: {item.apellidosDep}</Text>
             <Text style={styles.itemText}>Cédula: {item.cedulaDep}</Text>
-            <Text style={styles.itemText}>Categoría: {item.idCatNavigation.nombreCat || 'Sin categoría'}</Text>
+            {/* <Text style={styles.itemText}>Categoría: {item.idCatNavigation.nombreCat || 'Sin categoría'}</Text>
             <Text style={styles.itemText}>Club: {item.idClubNavigation.nombreClub || 'Sin club'}</Text>
             <Text style={styles.itemText}>Entrenador: {item.idEntNavigation.nombreEnt || 'Sin entrenador'}</Text>
-            <Text style={styles.itemText}>Género: {item.idGenNavigation.nombreGen || 'Sin género'}</Text>
-            <Text style={styles.itemText}>Provincia: {item.idProNavigation.nombrePro || 'Sin provincia'}</Text>
+            <Text style={styles.itemText}>Género: {item.idGenNavigation.nombreGen || 'Sin género'}</Text> */}
+            <Text style={styles.itemText}>Provincia: {String(item.provincia?.nombrePro || 'Sin provincia').trim()}</Text>
             <Text style={styles.itemText}>Estado: {item.activoDep ? 'Activo' : 'Inactivo'}</Text>
 
             {isAdminOrEntrenador && (
@@ -217,7 +244,7 @@ const Index = ({ navigation }) => {
             )}
           </View>
         )}
-        keyExtractor={(item) => item.IdDep ? item.IdDep.toString() : String(item.id || Math.random())}
+        keyExtractor={(item) => item.idDep ? item.idDep.toString() : String(item.id || Math.random())}
       />
     </View>
   );
@@ -226,6 +253,7 @@ const Index = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    marginBottom: 130,
   },
   adminSection: {
     marginBottom: 15,

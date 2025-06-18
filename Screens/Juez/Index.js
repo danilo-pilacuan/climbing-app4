@@ -1,16 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import api from '../../services/api'; // Asegúrate de que esta ruta sea correcta
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'; 
 
 const IndexJuez = ({ navigation }) => {
   const [jueces, setJueces] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredJueces, setFilteredJueces] = useState([]); // Estado para los jueces filtrados
   const [isAdminOrEntrenador, setIsAdminOrEntrenador] = useState(false);
+const [isActiveState, setIsActiveState] = useState(true);
+
+  useFocusEffect(
+      useCallback(() => {
+        let isActive = true;
+        setIsActiveState(isActive);
+        
+  
+        loadJueces();
+        checkUserRole(); // Simulando User.IsInRole
+  
+        return () => {
+          isActive = false; // Limpieza para evitar actualización de estado si el componente se desmonta
+          setIsActiveState(isActive);
+        };
+      }, [])
+    );
+  
 
   useEffect(() => {
-    loadJueces();
-    checkUserRole(); // Simulando User.IsInRole
+    
   }, []);
 
   const loadJueces = async () => {
@@ -22,6 +40,8 @@ const IndexJuez = ({ navigation }) => {
       console.error('Error cargando jueces:', error);
     }
   };
+
+  
 
 
   const checkUserRole = () => {

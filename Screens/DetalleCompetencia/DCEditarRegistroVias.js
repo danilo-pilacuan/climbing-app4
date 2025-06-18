@@ -98,9 +98,10 @@ const DCEditarRegistroResultado = () => {
 
       const bodyUpdate = {
         idRegistroResultado: registroResultado.idRegistroResultado,
-        MaxEscala1: registroResultado.maxEscala1,
-        MaxEscala2: registroResultado.maxEscala2,
-        Tiempo1: registroResultado.tiempo1, // Incluir el tiempo en el cuerpo de la petición
+        MaxEscala1: registroResultado.maxEscala1?registroResultado.maxEscala1.toString():"0",
+        MaxEscala2: registroResultado.maxEscala2?registroResultado.maxEscala2.toString():"0",
+        Tiempo1: registroResultado.tiempo1?registroResultado.tiempo1:0, // Incluir el tiempo en el cuerpo de la petición
+        Tiempo2: registroResultado.tiempo2?registroResultado.tiempo2:0, // Incluir el tiempo en el cuerpo de la petición
       };
 
       console.log("Body Update: 👽👽🐟🐟🐟", JSON.stringify(bodyUpdate));
@@ -135,21 +136,36 @@ const DCEditarRegistroResultado = () => {
       
       {/* Input para Tiempo */}
       <View style={styles.timeContainer}>
-        <Text style={styles.label}>Tiempo (segundos):</Text>
+        <View style={styles.row}>
+        <View style={styles.headerCell}>
+          <Text style={styles.label}>Tiempo R1 (segundos):</Text>
         <TextInput
-          style={styles.timeInput}
+          style={[styles.headerCell,styles.timeInput]}
           keyboardType="numeric"
           value={registroResultado.tiempo1>10000?"0":( registroResultado.tiempo1?.toString() || "")}
           onChangeText={(value) => handleInputChange("tiempo1", value)}
           placeholder="Ingresa el tiempo"
         />
+        </View>
+        {registroResultado.etapa==1 && <View style={styles.headerCell}>
+          <Text style={styles.label}>Tiempo R2 (segundos):</Text>
+          <TextInput
+          style={[styles.headerCell,styles.timeInput]}
+          keyboardType="numeric"
+          value={registroResultado.tiempo2>10000?"0":( registroResultado.tiempo2?.toString() || "")}
+          onChangeText={(value) => handleInputChange("tiempo2", value)}
+          placeholder="Ingresa el tiempo"
+        />
+        </View>}
+        
+        </View>
       </View>
 
       <View style={styles.tableContainer}>
         <View style={[styles.row, styles.headerRow]}>
           <Text style={styles.headerCell}></Text>
           <Text style={styles.headerCell}>R1</Text>
-          <Text style={styles.headerCell}>R2</Text>
+          {registroResultado.etapa==1 && <Text style={styles.headerCell}>R2</Text>}
         </View>
 
         <View style={styles.row}>
@@ -168,7 +184,7 @@ const DCEditarRegistroResultado = () => {
               onValueChange={() => handleToggleTop("maxEscala1")}
             />
           </View>
-          <TextInput
+          {registroResultado.etapa==1 && <><TextInput
             style={styles.inputCell}
             keyboardType="numeric"
             value={registroResultado.maxEscala2?.toString() || ""}
@@ -181,7 +197,7 @@ const DCEditarRegistroResultado = () => {
               value={topSeleccionado.maxEscala2}
               onValueChange={() => handleToggleTop("maxEscala2")}
             />
-          </View>
+          </View></>}
         </View>
       </View>
 

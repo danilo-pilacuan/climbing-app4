@@ -12,22 +12,22 @@ const DetailsEntrenador = ({ route }) => {
 
   // Efecto para cargar las listas
   useEffect(() => {
-    loadOptions(); // Cargar las opciones al montar el componente
+    //loadOptions(); // Cargar las opciones al montar el componente
     console.log('Entrenador recibido:', entrenador); 
   }, []);
 
   // Función para cargar las opciones
-  const loadOptions = async () => {
-    try {
-      // Cargar provincias
-      const provinciasResponse = await api.get('/api/Provincia');
-      console.log('Datos de provincias:', provinciasResponse.data);
-      setListaProvincias(provinciasResponse.data);
-    } catch (error) {
-      console.error('Error cargando opciones:', error.response ? error.response.data : error.message);
-      Alert.alert('Error', 'No se pudieron cargar las opciones');
-    }
-  };
+  // const loadOptions = async () => {
+  //   try {
+  //     // Cargar provincias
+  //     const provinciasResponse = await api.get('/api/Provincia');
+  //     console.log('Datos de provincias:', provinciasResponse.data);
+  //     setListaProvincias(provinciasResponse.data);
+  //   } catch (error) {
+  //     console.error('Error cargando opciones:', error.response ? error.response.data : error.message);
+  //     Alert.alert('Error', 'No se pudieron cargar las opciones');
+  //   }
+  // };
 
   const getProvinciaNombre = (idPro) => {
     const provincia = listaProvincias.find((provincia) => provincia.idPro === idPro);
@@ -50,10 +50,10 @@ const DetailsEntrenador = ({ route }) => {
         <Text style={styles.valor}>{entrenador.cedulaEnt || 'No disponible'}</Text>
 
         <Text style={styles.label}>Provincia</Text>
-        <Text style={styles.valor}>{getProvinciaNombre(entrenador.idPro)}</Text>
+        <Text style={styles.valor}>{entrenador.provincia.nombrePro|| 'No disponible'}</Text>
 
         <Text style={styles.label}>Estado</Text>
-        <Text style={styles.valor}>{getEstado(entrenador.activoEnt)}</Text>
+        <Text style={styles.valor}>{entrenador.activoEnt?"Activo":"Inactivo"|| 'No disponible'}</Text>
       </View>
       
     </View>

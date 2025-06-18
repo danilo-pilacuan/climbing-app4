@@ -1,28 +1,77 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity,ScrollView } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native'; // Importa useNavigation y useRoute
+import api from '../../services/api'; // Asegúrate de importar tu API
 
-const Details = ({ sede, navigation }) => {
+const Details = () => {
+  const navigation = useNavigation(); // Inicializa la navegación
+    const route = useRoute(); // Obtiene los parámetros de la ruta
+  const sede = route.params.sede; // Obtener el objeto sede pasado como parámetro
+  const [listaCompetencias, setListaCompetencias] = useState([]);
+
+  useEffect(() => {
+      loadCompetencias(); // Cargar los competencias al montar el componente
+      console.log('Sede recibido:', sede); 
+    }, []);
+  
+    // Función para cargar los competencias del sede
+    const loadCompetencias = async () => {
+      try {
+        const response = await api.get(`/api/Competencia/sede/${sede.idSede}`); // Usar el endpoint correcto
+        console.log('Datos de competencias:', response.data);
+        setListaCompetencias(response.data);
+      } catch (error) {
+        console.error('Error cargando competencias:', error.response ? error.response.data : error.message);
+        Alert.alert('Error', 'No se pudieron cargar los competencias');
+      }
+    };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>DETALLES</Text>
+      {/* <Text style={styles.title}>DETALLES</Text>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Nombre de Sede:</Text>
-        <Text style={styles.value}>{sede.NombreSede}</Text>
+        <Text style={styles.value}>{sede.nombreSede}</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate('SedeEditar', { idSede: sede.IdSede })}
-        >
-          <Text style={styles.buttonText}>Editar</Text>
-        </TouchableOpacity>
+        <ScrollView>
+                {listaCompetencias.length > 0 ? (
+                  listaCompetencias.map((competencia) => (
+                    <View key={competencia.idCom} style={styles.competenciasContainer}>
+                      <Text style={styles.valor}>{competencia.nombresDep}</Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.valor}>No hay competencias registrados en este sede.</Text>
+                )}
+              </ScrollView>
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => navigation.goBack()}
         >
           <Text style={styles.buttonText}>Regresar</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
+      <Text style={styles.titulo}>DETALLES SEDE</Text>
+            <Text style={styles.label}>Nombre de Sede</Text>
+            <Text style={styles.valor}>{sede.nombreSede || 'No disponible'}</Text>
+      
+            <Text style={styles.label}>Competencias:</Text>
+            <ScrollView>
+              {listaCompetencias.length > 0 ? (
+                listaCompetencias.map((competencia) => (
+                  <View key={competencia.idCom} style={styles.competenciaContainer}>
+                    <Text style={styles.valor}>{competencia.nombreCom}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.valor}>No hay competencias registrados en este sede.</Text>
+              )}
+            </ScrollView>
+      
+            <TouchableOpacity style={styles.botonRegresar} onPress={() => navigation.goBack()}>
+              <Text style={styles.textoBotonRegresar}>Regresar</Text>
+            </TouchableOpacity>
     </View>
   );
 };
@@ -30,47 +79,37 @@ const Details = ({ sede, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  infoContainer: {
-    marginBottom: 30,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  value: {
-    fontSize: 16,
-    marginBottom: 15,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  editButton: {
-    width: '45%',
-    paddingVertical: 10,
-    borderRadius: 5,
-    backgroundColor: '#ffc107',
-  },
-  cancelButton: {
-    width: '45%',
-    paddingVertical: 10,
-    borderRadius: 5,
-    backgroundColor: '#dc3545',
-  },
-  buttonText: {
-    fontSize: 16,
-    color: '#fff',
-    textAlign: 'center',
-  },
+    backgroundColor: '#fff',
+    padding: 20,
+   },
+   titulo: {
+     fontSize: 24,
+     fontWeight: 'bold',
+     marginBottom: 10,
+   },
+   label: {
+     fontSize: 16,
+     fontWeight: 'bold',
+     marginBottom: 5,
+   },
+   valor: {
+     fontSize: 16,
+     marginBottom: 15,
+   },
+   deportistaContainer: {
+     paddingVertical: 5,
+     borderBottomWidth: 1,
+     borderBottomColor: '#ccc',
+   },
+   botonRegresar: {
+     backgroundColor: '#dc3545',
+     padding: 10,
+     borderRadius: 5,
+   },
+   textoBotonRegresar: {
+     fontSize:16 ,
+     color:'#fff' ,
+   },
 });
 
 export default Details;

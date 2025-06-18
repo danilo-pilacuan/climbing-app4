@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { View, Text, TextInput, Button, FlatList, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
 import api from '../../services/api'; // Asegúrate de importar tu instancia de API
+import { useRoute, useFocusEffect } from '@react-navigation/native'; 
 
 const IndexClub = () => {
   const navigation = useNavigation(); // Inicializa useNavigation
@@ -9,8 +10,23 @@ const IndexClub = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newClubName, setNewClubName] = useState('');
+  const [isActiveState, setIsActiveState] = useState(true);
 
-  useEffect(() => {
+  useFocusEffect(
+      useCallback(() => {
+        let isActive = true;
+        setIsActiveState(isActive);
+        
+  
+        fetchClubes();
+  
+        return () => {
+          isActive = false; // Limpieza para evitar actualización de estado si el componente se desmonta
+          setIsActiveState(isActive);
+        };
+      }, [])
+    );
+
     const fetchClubes = async () => {
       try {
         const response = await api.get('/api/Club'); // Cambia según tu API
@@ -23,8 +39,10 @@ const IndexClub = () => {
         setLoading(false);
       }
     };
+  useEffect(() => {
+    
 
-    fetchClubes();
+    
   }, []);
 
   const handleCreateClub = async () => {

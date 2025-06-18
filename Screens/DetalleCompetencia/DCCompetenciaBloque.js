@@ -361,7 +361,7 @@ const DCCompetenciaBloque = () => {
         return (
           <View style={styles.faseContainer}>
             <Text style={styles.label}>
-              Etapa Final: {regsResFinal.filter((r) => r.etapaCompleta).length}/
+              Etapa Final: {regsResFinal.filter((r) => r.registroCompleto).length}/
               {regsResFinal.length}
             </Text>
 

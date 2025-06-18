@@ -6,7 +6,7 @@ import api from '../../services/api'; // Asegúrate de importar tu API
 const EditSede = () => {
   const navigation = useNavigation(); // Inicializa la navegación
   const route = useRoute(); // Obtiene los parámetros de la ruta
-  const sede = route.params.club; // Obtener el objeto club pasado como parámetro
+  const sede = route.params.sede; // Obtener el objeto club pasado como parámetro
 
   // Inicializar los estados
   const [nombreSede, setNombreSede] = useState(sede.nombreSede || ''); // Inicializa con el nombre de la sede
@@ -22,7 +22,7 @@ const EditSede = () => {
       });
       console.log('Sede actualizada:', response.data);
       Alert.alert('Éxito', 'Sede actualizada con éxito');
-      navigation.navigate('Index'); // Regresar a la lista de sedes
+      navigation.pop(); // Regresar a la lista de sedes
     } catch (error) {
       console.error('Error guardando sede:', error);
       Alert.alert('Error', 'No se pudo actualizar la sede');

@@ -14,13 +14,15 @@ const Stack = createNativeStackNavigator();
   const DeportistaStackNavigation = () => {
 
     return (
-      <Stack.Navigator>
+      <Stack.Navigator
+      options={{ headerShown: false }}
+      >
       {/* <Stack.Screen name="DeportistaIndex" component={DeportistaIndex} /> */}
-      <Stack.Screen name="DeportistaIndex" component={DeportistaIndex} />
-      <Stack.Screen name="CreateDeportista" component={CreateDeportista} />
-      <Stack.Screen name="EditDeportista" component={EditDeportista} />
-      <Stack.Screen name="DetailsDeportista" component={DetailsDeportista} />
-      <Stack.Screen name="DeleteDeportista" component={DeleteDeportista} />
+      <Stack.Screen options={{ headerShown: false}} name="DeportistaIndex" component={DeportistaIndex} />
+      <Stack.Screen options={{ headerShown: false}} name="CreateDeportista" component={CreateDeportista} />
+      <Stack.Screen options={{ headerShown: false}} name="EditDeportista" component={EditDeportista} />
+      <Stack.Screen options={{ headerShown: false}} name="DetailsDeportista" component={DetailsDeportista} />
+      <Stack.Screen options={{ headerShown: false}} name="DeleteDeportista" component={DeleteDeportista} />
     </Stack.Navigator>
     );
 }

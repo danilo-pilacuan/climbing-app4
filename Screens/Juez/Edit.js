@@ -10,7 +10,7 @@ const Edit = () => {
   const navigation = useNavigation();
 
   // Validar que el objeto juez y su id estén definidos
-  if (!juez || juez.id === undefined) {
+  if (!juez || juez.idJuez === undefined) {
     Alert.alert('Error', 'No se ha proporcionado un juez válido.');
     navigation.goBack();
     return null;
@@ -26,8 +26,32 @@ const Edit = () => {
   const [activoJuez, setActivoJuez] = useState(juez.activoJuez || true);
 
   const [listaEstados, setListaEstados] = useState([]);
-  const [listaProvincias, setListaProvincias] = useState([]);
-
+  const [listaProvincias, setListaProvincias] = useState([
+  { idPro: '01', nombrePro: 'Azuay' },
+  { idPro: '02', nombrePro: 'Bolívar' },
+  { idPro: '03', nombrePro: 'Cañar' },
+  { idPro: '04', nombrePro: 'Carchi' },
+  { idPro: '05', nombrePro: 'Cotopaxi' },
+  { idPro: '06', nombrePro: 'Chimborazo' },
+  { idPro: '07', nombrePro: 'El Oro' },
+  { idPro: '08', nombrePro: 'Esmeraldas' },
+  { idPro: '09', nombrePro: 'Guayas' }, 
+  { idPro: '10', nombrePro: 'Imbabura' },
+  { idPro: '11', nombrePro: 'Loja' },
+  { idPro: '12', nombrePro: 'Los Ríos' },
+  { idPro: '13', nombrePro: 'Manabí' },
+  { idPro: '14', nombrePro: 'Morona Santiago' },
+  { idPro: '15', nombrePro: 'Napo' },
+  { idPro: '16', nombrePro: 'Pastaza' },
+  { idPro: '17', nombrePro: 'Pichincha' },
+  { idPro: '18', nombrePro: 'Tungurahua' },
+  { idPro: '19', nombrePro: 'Zamora Chinchipe' },
+  { idPro: '20', nombrePro: 'Galápagos' },
+  { idPro: '21', nombrePro: 'Sucumbíos' },
+  { idPro: '22', nombrePro: 'Orellana' },
+  { idPro: '23', nombrePro: 'Santo Domingo de los Tsáchilas' },
+  { idPro: '24', nombrePro: 'Santa Elena' },
+]);
   useEffect(() => {
     loadOptions();
   }, []);
@@ -35,9 +59,9 @@ const Edit = () => {
   const loadOptions = async () => {
     try {
       // Cargar provincias
-      const provinciasResponse = await api.get('/api/Provincia');
-      console.log('Datos de provincias:', provinciasResponse.data);
-      setListaProvincias(provinciasResponse.data);
+      // const provinciasResponse = await api.get('/api/Provincia');
+      // console.log('Datos de provincias:', provinciasResponse.data);
+      // setListaProvincias(provinciasResponse.data);
 
       // Cargar estados
       const estados = [

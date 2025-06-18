@@ -20,7 +20,7 @@ const DetailsClub = () => {
   // Función para cargar los deportistas del club
   const loadDeportistas = async () => {
     try {
-      const response = await api.get(`/api/Club/ListaDeportistas/${club.idClub}`); // Usar el endpoint correcto
+      const response = await api.get(`/api/Deportista/club/${club.idClub}`); // Usar el endpoint correcto
       console.log('Datos de deportistas:', response.data);
       setListaDeportistas(response.data);
     } catch (error) {

@@ -21,7 +21,32 @@ const Edit = ({ route }) => {
   const [activoDep, setActivoDep] = useState('');
 
   // Listas para los selectores
-  const [listaProvincias, setListaProvincias] = useState([]);
+const [listaProvincias, setListaProvincias] = useState([
+  { idPro: 1, nombrePro: 'Azuay' },
+  { idPro: 2, nombrePro: 'Bolívar' },
+  { idPro: 3, nombrePro: 'Cañar' },
+  { idPro: 4, nombrePro: 'Carchi' },
+  { idPro: 5, nombrePro: 'Cotopaxi' },
+  { idPro: 6, nombrePro: 'Chimborazo' },
+  { idPro: 7, nombrePro: 'El Oro' },
+  { idPro: 8, nombrePro: 'Esmeraldas' },
+  { idPro: 9, nombrePro: 'Guayas' }, 
+  { idPro: 10, nombrePro: 'Imbabura' },
+  { idPro: 11, nombrePro: 'Loja' },
+  { idPro: 12, nombrePro: 'Los Ríos' },
+  { idPro: 13, nombrePro: 'Manabí' },
+  { idPro: 14, nombrePro: 'Morona Santiago' },
+  { idPro: 15, nombrePro: 'Napo' },
+  { idPro: 16, nombrePro: 'Pastaza' },
+  { idPro: 17, nombrePro: 'Pichincha' },
+  { idPro: 18, nombrePro: 'Tungurahua' },
+  { idPro: 19, nombrePro: 'Zamora Chinchipe' },
+  { idPro: 20, nombrePro: 'Galápagos' },
+  { idPro: 21, nombrePro: 'Sucumbíos' },
+  { idPro: 22, nombrePro: 'Orellana' },
+  { idPro: 23, nombrePro: 'Santo Domingo de los Tsáchilas' },
+  { idPro: 24, nombrePro: 'Santa Elena' },
+]);
   const [listaUsuarios, setListaUsuarios] = useState([]);
   const [listaCategorias, setListaCategorias] = useState([]);
   const [listaGeneros, setListaGeneros] = useState([]);
@@ -51,12 +76,12 @@ const Edit = ({ route }) => {
   const loadOptions = async () => {
     try {
       // Cargar provincias
-      const provinciasResponse = await api.get('/api/Provincia');
-      console.log('Datos de provincias:', provinciasResponse.data);
-      setListaProvincias(provinciasResponse.data);
+      // const provinciasResponse = await api.get('/api/Provincia');
+      // console.log('Datos de provincias:', provinciasResponse.data);
+      // setListaProvincias(provinciasResponse.data);
 
       // Cargar categorías
-      const categoriasResponse = await api.get('/api/Categoria');
+      const categoriasResponse = await api.get('/api/Categorium');
       console.log('Datos de categorías:', categoriasResponse.data);
       if (categoriasResponse.status === 200) {
         setListaCategorias(categoriasResponse.data);
@@ -91,22 +116,43 @@ const Edit = ({ route }) => {
   const handleGuardar = async () => {
     try {
       // Crear objeto con los datos a enviar
+      /*
+      public int IdDep { get; set; }
+
+public string? NombresDep { get; set; }
+
+public string? ApellidosDep { get; set; }
+
+public string? CedulaDep { get; set; }
+
+public bool? ActivoDep { get; set; }
+
+
+public int? IdGen { get; set; }
+
+public int? IdClub { get; set; }
+
+public int? IdEnt { get; set; }
+public int? IdProvincia { get; set; }
+public int? IdUsuario { get; set; }
+      */
       const datosDeportista = {
+        idDep: deportista.idDep, // Asegúrate de usar el ID correcto
         nombresDep,
         apellidosDep,
         cedulaDep,
-        idPro,
-        idUsu,
-        idCat,
+        idProvincia: idPro,
+        // idUsuario,
         idGen,
         idClub,
         idEnt,
         activoDep: activoDep === 'true', // Asegúrate de que sea un booleano
         // Puedes añadir otros campos si es necesario
       };
-
+      console.log('🦑🦑😡😡/api/Deportista/'+deportista.idDep)
+      console.log('🦑🦑😡😡Datos del deportista a guardar:', datosDeportista); // Imprimir para verificar
       // Enviar los datos al servidor usando POST
-      const response = await api.post('/api/Deportista', datosDeportista);
+      const response = await api.put('/api/Deportista/'+deportista.idDep, datosDeportista);
 
       console.log('Deportista guardado:', response.data); // Verifica la respuesta del servidor
 
@@ -159,7 +205,7 @@ const Edit = ({ route }) => {
       {/* Selector de Provincia */}
       <View style={styles.formGroup}>
         <Text style={styles.label}>Provincia</Text>
-        <Picker selectedValue={idPro} style={styles.select} onValueChange={(itemValue) => setIdPro(itemValue)}>
+        <Picker selectedValue={idPro} style={styles.select} onValueChange={(itemValue)=>setIdPro(itemValue)}>
           <Picker.Item label="--Elija la Provincia--" value="" />
           {listaProvincias.map((provincia) => (
             <Picker.Item label={provincia.nombrePro} value={provincia.idPro} key={provincia.idPro} />
